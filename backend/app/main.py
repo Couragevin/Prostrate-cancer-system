@@ -10,9 +10,14 @@ from app.api.router import api_router
 from app.core.config import settings
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
+    title="Prostate Cancer Risk Stratification API",
     version="1.0.0",
-    description="Backend API for Prostate Cancer Risk Stratification CDS",
+    description="Backend API for Prostate Cancer Risk Stratification CDS. Features a dual-model XGBoost/Logistic Regression pipeline.",
+    contact={
+        "name": "Vin-Okemeri Courage (COS/909/2022)",
+        "url": "https://fupre.edu.ng",
+        "email": "student@fupre.edu.ng",
+    },
 )
 
 # Set all CORS enabled origins

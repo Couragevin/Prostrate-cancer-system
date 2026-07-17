@@ -1,30 +1,33 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.models.schemas import PatientFeatures, PredictionResponse
-from app.services.clinical_rules import ClinicalRulesEngine
+from app.models.schemas import ClinicalInput, PredictionResponse
+from app.services.reasoning import ClinicalReasoningEngine
 from app.ml.inference import ModelInference
 
 router = APIRouter()
-rules_engine = ClinicalRulesEngine()
+reasoning_engine = ClinicalReasoningEngine()
 inference_service = ModelInference()
 
 @router.post("/", response_model=PredictionResponse)
-def predict_risk(features: PatientFeatures):
+def predict_risk(features: ClinicalInput, use_logistic: bool = False):
     """
     Predicts the risk of prostate cancer based on patient features.
-    It combines rule-based clinical guidelines with the ML pipeline (XGBoost + Platt-scaled Logistic Regression).
+    Handles dual-model inference (XGBoost or Calibrated Logistic Regression)
+    and returns SHAP explanations synthesized into a plain-language narrative.
     """
-    # 1. Apply preliminary clinical rules
-    rule_decision = rules_engine.evaluate_guidelines(features)
-    
-    # 2. ML Inference and Explainability
     try:
-        prediction_result = inference_service.predict_and_explain(features)
+        # ML Inference
+        prediction_result = inference_service.predict_and_explain(features, use_logistic)
+        
+        # Synthesize Clinical Narrative
+        narrative = reasoning_engine.generate_narrative(
+            features=features,
+            risk_category=prediction_result.risk_category,
+            shap_summary=prediction_result.shap_summary
+        )
+        
+        # Enhance the result with the comprehensive narrative
+        prediction_result.shap_summary = narrative
+        
+        return prediction_result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Model inference failed: {str(e)}")
-        
-    return PredictionResponse(
-        risk_score=prediction_result.get("risk_score"),
-        risk_category=prediction_result.get("risk_category"),
-        shap_summary=prediction_result.get("shap_summary"),
-        shap_values=prediction_result.get("shap_values")
-    )

@@ -1,6 +1,9 @@
-import numpy as np
 import pandas as pd
-from app.models.schemas import PatientFeatures
+from typing import Dict, Any
+from huggingface_hub import hf_hub_download
+import joblib
+
+from app.models.schemas import ClinicalInput, PredictionResponse, XGBoostResponse, LogisticRegressionResponse
 
 class ModelInference:
     """
@@ -10,24 +13,34 @@ class ModelInference:
     3. SHAP TreeExplainer for Explainable AI (XAI)
     """
     def __init__(self):
-        # Stub for loading the actual trained XGBoost and Logistic Regression models
-        # e.g., self.xgb_model = joblib.load('path/to/xgb.pkl')
-        # e.g., self.calibrated_lr = joblib.load('path/to/calibrated_lr.pkl')
-        # e.g., self.explainer = shap.TreeExplainer(self.xgb_model)
-        pass
+        # Stub for loading the actual trained models from Hugging Face Hub
+        self.repo_id = "Couragevin/prostate-cancer-risk-models"
+        self.xgb_filename = "xgboost_model.joblib"
+        self.lr_filename = "logistic_regression_calibrated.joblib"
+        self.models_loaded = False
+        
+    def load_models(self):
+        """Loads models from Hugging Face. Stubs implementation."""
+        try:
+            # Uncomment and replace repo_id when models are uploaded
+            # xgb_path = hf_hub_download(repo_id=self.repo_id, filename=self.xgb_filename)
+            # self.xgb_model = joblib.load(xgb_path)
+            
+            # lr_path = hf_hub_download(repo_id=self.repo_id, filename=self.lr_filename)
+            # self.lr_model = joblib.load(lr_path)
+            self.models_loaded = True
+        except Exception as e:
+            print(f"Model loading stub: {e}")
 
-    def predict_and_explain(self, features: PatientFeatures) -> dict:
+    def predict_and_explain(self, features: ClinicalInput, use_logistic: bool = False) -> PredictionResponse:
         """
-        Runs inference and generates plain-language SHAP summaries.
+        Runs inference and returns a discriminated union response.
         """
         # --- Stub implementation ---
-        # Convert features to DataFrame
-        # df = pd.DataFrame([features.model_dump()])
+        # Simulated logic
         
-        # Simulated risk score (0.0 to 1.0)
         risk_score = 0.65 
         
-        # Categorize risk
         if risk_score < 0.3:
             category = "Low"
         elif risk_score < 0.7:
@@ -35,18 +48,23 @@ class ModelInference:
         else:
             category = "High"
             
-        # Simulated SHAP values
-        shap_vals = {"age": 0.15, "psa_level": 0.40, "family_history": 0.10}
-        
-        # Generate plain-language summary for clinician
+        shap_vals = {"psa_level": 0.40, "psa_density": 0.20, "family_history": 0.10}
         shap_summary = (
             f"The patient's PSA level ({features.psa_level} ng/mL) is the primary driver "
-            f"of the {category.lower()} risk classification. Age and family history also moderately increase the estimated risk."
+            f"of the {category.lower()} risk classification."
         )
 
-        return {
-            "risk_score": risk_score,
-            "risk_category": category,
-            "shap_summary": shap_summary,
-            "shap_values": shap_vals
-        }
+        if use_logistic:
+            return LogisticRegressionResponse(
+                risk_category=category,
+                shap_summary=shap_summary,
+                shap_values=shap_vals,
+                logistic_risk_score=risk_score
+            )
+        else:
+            return XGBoostResponse(
+                risk_category=category,
+                shap_summary=shap_summary,
+                shap_values=shap_vals,
+                xgboost_probability=risk_score
+            )

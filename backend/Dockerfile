@@ -18,5 +18,8 @@ RUN pip install --no-cache /wheels/*
 
 COPY ./app /app/app
 
+# Render assigns a dynamic port via the PORT environment variable
+ENV PORT=8000
+
 # Start the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]
