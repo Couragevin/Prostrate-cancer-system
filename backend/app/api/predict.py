@@ -22,7 +22,7 @@ def predict_risk(features: ClinicalInput, use_logistic: bool = False):
         narrative = reasoning_engine.generate_narrative(
             features=features,
             risk_category=prediction_result.risk_category,
-            shap_summary=prediction_result.shap_summary
+            shap_values=prediction_result.shap_values
         )
         
         # Enhance the result with the comprehensive narrative
