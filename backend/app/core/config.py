@@ -18,6 +18,7 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
+    DATABASE_URL: str = ""
     SUPABASE_URL: str = ""
     SUPABASE_KEY: str = ""
 
