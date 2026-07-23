@@ -1,4 +1,5 @@
 import { AssessmentForm } from "@/components/AssessmentForm";
+import { PatientHistory } from "@/components/PatientHistory";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Home() {
@@ -25,6 +26,10 @@ export default function Home() {
             <AssessmentForm />
           </CardContent>
         </Card>
+
+        <div className="mt-8">
+          <PatientHistory patientId="test-patient-1" />
+        </div>
       </div>
     </main>
   );

@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
+import { api } from "@/lib/api";
+import { RiskCard } from "./RiskCard";
+import { ShapBarChart } from "./ShapBarChart";
 
 export function AssessmentForm() {
   const [result, setResult] = useState<any>(null);
@@ -30,20 +33,11 @@ export function AssessmentForm() {
   const onSubmit = async (data: ClinicalInput) => {
     setLoading(true);
     try {
-      // In Phase 3, this will call our FastAPI backend
-      console.log("Submitting:", data);
-      
-      // Mock Response for now
-      setTimeout(() => {
-        setResult({
-          risk_score: 0.85,
-          clinical_narrative: "Patient exhibits elevated risk...",
-        });
-        setLoading(false);
-      }, 1000);
-      
+      const response = await api.post("/api/v1/predict", data);
+      setResult(response.data);
     } catch (error) {
-      console.error(error);
+      console.error("Prediction failed:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -159,10 +153,14 @@ export function AssessmentForm() {
       </form>
 
       {result && (
-        <div className="mt-8 p-6 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Assessment Results</h3>
-          <p className="text-zinc-600 dark:text-zinc-400">Risk Score: {(result.risk_score * 100).toFixed(1)}%</p>
-          <p className="mt-2 text-sm">{result.clinical_narrative}</p>
+        <div className="mt-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <RiskCard 
+            riskScore={result.risk_score} 
+            clinicalNarrative={result.clinical_narrative} 
+          />
+          {result.shap_values && (
+            <ShapBarChart shapValues={result.shap_values} />
+          )}
         </div>
       )}
     </div>
