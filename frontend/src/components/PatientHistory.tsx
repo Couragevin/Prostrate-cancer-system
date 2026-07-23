@@ -6,20 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { format } from "date-fns";
 import { TrendingUp, History, Activity, Calendar, UserCheck } from "lucide-react";
-
-interface HistoryRecord {
-  id: string;
-  psa_level: number;
-  risk_score: number;
-  created_at: string;
-}
+import { type PatientHistoryRecord, type ChartHistoryPoint } from "@/lib/types";
 
 interface PatientHistoryProps {
   patientId: string;
 }
 
 export function PatientHistory({ patientId }: PatientHistoryProps) {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<ChartHistoryPoint[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,7 +23,7 @@ export function PatientHistory({ patientId }: PatientHistoryProps) {
         const historyData = response.data.history;
         
         // Transform data for Recharts (reverse to get chronological order)
-        const formattedData = (historyData || []).reverse().map((record: HistoryRecord) => ({
+        const formattedData = (historyData || []).reverse().map((record: PatientHistoryRecord) => ({
           date: format(new Date(record.created_at), "MMM yyyy"),
           psa_level: record.psa_level,
           risk: record.risk_score * 100, // percentage

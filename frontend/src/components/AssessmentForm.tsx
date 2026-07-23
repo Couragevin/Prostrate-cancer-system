@@ -26,8 +26,10 @@ import {
   FileCheck2
 } from "lucide-react";
 
+import { type PredictionResponse } from "@/lib/types";
+
 export function AssessmentForm() {
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<PredictionResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
   const {
