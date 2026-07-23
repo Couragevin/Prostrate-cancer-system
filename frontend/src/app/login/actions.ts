@@ -5,37 +5,49 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 
 export async function login(formData: FormData) {
-  const supabase = await createClient()
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
 
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+  if (!email || !password) {
+    redirect('/login?error=Please fill in both email and password fields.')
   }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  try {
+    const supabase = await createClient()
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
 
-  if (error) {
-    redirect('/login?error=Could not authenticate user')
+    if (error) {
+      redirect(`/login?error=${encodeURIComponent(error.message)}`)
+    }
+  } catch (err: any) {
+    if (err.digest?.startsWith('NEXT_REDIRECT')) throw err;
+    redirect('/login?error=Supabase authentication service unavailable. Try Demo Clinician Access below.')
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/dashboard')
 }
 
 export async function signup(formData: FormData) {
-  const supabase = await createClient()
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
 
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+  if (!email || !password) {
+    redirect('/login?error=Please fill in both email and password fields.')
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  try {
+    const supabase = await createClient()
+    const { error } = await supabase.auth.signUp({ email, password })
 
-  if (error) {
-    redirect('/login?error=Could not authenticate user')
+    if (error) {
+      redirect(`/login?error=${encodeURIComponent(error.message)}`)
+    }
+  } catch (err: any) {
+    if (err.digest?.startsWith('NEXT_REDIRECT')) throw err;
+    redirect('/login?error=Supabase signup service unavailable. Try Demo Clinician Access below.')
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/dashboard')
 }
