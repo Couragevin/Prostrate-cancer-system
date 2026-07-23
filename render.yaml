@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: cancer-courage-api
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: oregon
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: BACKEND_CORS_ORIGINS
+        value: "http://localhost:3000,http://127.0.0.1:3000,https://cancer-courage.vercel.app"
