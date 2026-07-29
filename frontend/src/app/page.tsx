@@ -144,11 +144,11 @@ export default function Home() {
       </section>
 
       {/* 3. Soft Cream Features Section ("Seamless Healthcare at Your Fingertips") */}
-      <section id="features" className="bg-[#F4F6F4] text-primary-foreground py-20 lg:py-28">
+      <section id="features" className="bg-secondary text-secondary-foreground py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 space-y-16">
           
           <div className="max-w-3xl space-y-4">
-            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-primary-foreground leading-tight">
+            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground leading-tight">
               Seamless healthcare decisioning at your fingertips.
             </h2>
             <p className="text-base text-muted-foreground font-normal">
@@ -164,7 +164,7 @@ export default function Home() {
               <div className="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
                 <Stethoscope className="w-7 h-7" />
               </div>
-              <h3 className="text-xl font-bold text-primary-foreground">Access XGBoost model</h3>
+              <h3 className="text-xl font-bold text-foreground">Access XGBoost model</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 We make it easy to assess diagnostic risk. Compute real-time localized risk scores based on diagnostic biomarkers.
               </p>
@@ -175,7 +175,7 @@ export default function Home() {
               <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
                 <Shield className="w-7 h-7" />
               </div>
-              <h3 className="text-xl font-bold text-primary-foreground">Platt-scaled precision</h3>
+              <h3 className="text-xl font-bold text-foreground">Platt-scaled precision</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Raw model probabilities are recalibrated using population-specific epidemiological prevalence for Nigerian men.
               </p>
@@ -186,7 +186,7 @@ export default function Home() {
               <div className="w-14 h-14 rounded-2xl bg-teal-100 text-primary flex items-center justify-center">
                 <Dna className="w-7 h-7" />
               </div>
-              <h3 className="text-xl font-bold text-primary-foreground">SHAP explainability</h3>
+              <h3 className="text-xl font-bold text-foreground">SHAP explainability</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Visual attribution charts break down exactly how Age, PSA, and DRE exam findings contribute to the risk score.
               </p>
@@ -195,10 +195,10 @@ export default function Home() {
           </div>
 
           {/* 4. Browse Clinical Biomarkers Section (Light Cream Continued) */}
-          <div id="biomarkers" className="pt-16 border-t border-slate-200 space-y-12">
+          <div id="biomarkers" className="pt-16 border-t border-border space-y-12">
             
             <div className="max-w-2xl space-y-3">
-              <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground">
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
                 Browse clinical indicators.
               </h2>
               <p className="text-sm text-muted-foreground">
@@ -208,21 +208,21 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="space-y-2">
-                <h4 className="text-lg font-bold text-primary-foreground">PSA Density & Level</h4>
+                <h4 className="text-lg font-bold text-foreground">PSA Density & Level</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Evaluates total serum PSA and density ratios to identify abnormal prostate tissue proliferation early.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <h4 className="text-lg font-bold text-primary-foreground">DRE Clinical Findings</h4>
+                <h4 className="text-lg font-bold text-foreground">DRE Clinical Findings</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Categorizes exam findings into Normal, Suspicious, or Abnormal nodular structures.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <h4 className="text-lg font-bold text-primary-foreground">Comorbidities & Age</h4>
+                <h4 className="text-lg font-bold text-foreground">Comorbidities & Age</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Considers patient age bands, hypertension, diabetes, and direct familial history of prostate carcinoma.
                 </p>
