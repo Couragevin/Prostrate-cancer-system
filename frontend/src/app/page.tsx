@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { 
   ShieldCheck, 
   Stethoscope, 
@@ -47,8 +48,9 @@ export default function Home() {
             <a href="#testimonials" className="hover:text-[#00C9A7] transition-colors">Clinicians</a>
           </nav>
 
-          {/* Header Action Button */}
+          {/* Header Action Button & Theme Toggle */}
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <Link href="/assessment">
               <button className="btn-pill-mint text-xs font-bold shadow-lg flex items-center gap-2">
                 <span>Get Tested</span>

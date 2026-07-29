@@ -1,6 +1,7 @@
 import { login, signup } from './actions'
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { ThemeToggle } from "@/components/ThemeToggle"
 import Link from "next/link"
 import { Stethoscope, ShieldCheck, ArrowLeft, LogIn, UserPlus, Sparkles, AlertCircle, TestTube, ChevronRight } from "lucide-react"
 
@@ -16,14 +17,17 @@ export default async function LoginPage({
       
       <div className="w-full max-w-md space-y-6 relative z-10">
         
-        {/* Back Link */}
-        <Link 
-          href="/" 
-          className="btn-pill-outline text-xs inline-flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Home</span>
-        </Link>
+        {/* Back Link & Theme Toggle */}
+        <div className="flex items-center justify-between">
+          <Link 
+            href="/" 
+            className="btn-pill-outline text-xs inline-flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Home</span>
+          </Link>
+          <ThemeToggle />
+        </div>
 
         {/* Card */}
         <div className="bg-[#073543] rounded-[32px] border border-white/10 p-8 shadow-2xl space-y-6">

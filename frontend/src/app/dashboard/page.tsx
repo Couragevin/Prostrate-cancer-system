@@ -13,6 +13,8 @@ import {
   ChevronRight
 } from "lucide-react";
 
+import { ThemeToggle } from "@/components/ThemeToggle";
+
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#03242E] text-white font-sans selection:bg-[#00C9A7] selection:text-[#03242E]">
@@ -32,6 +34,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <Link href="/">
               <button className="btn-pill-outline text-xs font-semibold flex items-center gap-1.5 py-2 px-4">
                 <Home className="w-4 h-4" />
