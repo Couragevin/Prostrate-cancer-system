@@ -51,7 +51,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <Link href="/assessment">
               <button className="btn-pill-mint text-xs font-bold shadow-lg flex items-center gap-2">
-                <span>Schedule Assessment</span>
+                <span>Get Tested</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </Link>
@@ -87,7 +87,7 @@ export default function Home() {
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link href="/assessment">
                 <button className="btn-pill-mint text-sm font-bold flex items-center gap-2">
-                  <span>Schedule Assessment</span>
+                  <span>Get Tested</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
@@ -310,7 +310,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link href="/assessment">
               <button className="btn-pill-mint text-sm font-bold flex items-center gap-2">
-                <span>Schedule Assessment</span>
+                <span>Get Tested</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </Link>
