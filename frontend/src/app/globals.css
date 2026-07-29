@@ -11,6 +11,18 @@
   --font-mono: monospace;
   --font-heading: var(--font-montserrat), system-ui, sans-serif;
   --font-logo: var(--font-anton), impact, sans-serif;
+
+  /* Better Medical Inspired Design System Tokens */
+  --color-navy-dark: #03242E;
+  --color-navy-surface: #073543;
+  --color-navy-card: #0A3D4C;
+  --color-mint-accent: #00C9A7;
+  --color-mint-hover: #00B395;
+  --color-mint-soft: #E6F9F5;
+  --color-[#00C9A7]: #00C9A7;
+  --color-cream-bg: #F4F6F4;
+  --color-cream-card: #FFFFFF;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -50,72 +62,25 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #03242E;
+  --foreground: #FFFFFF;
+  --card: #073543;
+  --card-foreground: #FFFFFF;
+  --popover: #073543;
+  --popover-foreground: #FFFFFF;
+  --primary: #00C9A7;
+  --primary-foreground: #03242E;
+  --secondary: #F4F6F4;
+  --secondary-foreground: #03242E;
+  --muted: #073543;
+  --muted-foreground: #94A3B8;
+  --accent: #00C9A7;
+  --accent-foreground: #03242E;
+  --destructive: #F43F5E;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #00C9A7;
+  --radius: 1.25rem;
 }
 
 .font-logo {
@@ -124,12 +89,69 @@
   text-transform: uppercase;
 }
 
+/* Custom Design System Utility Classes */
+.bg-navy-dark { background-color: #03242E; }
+.bg-navy-surface { background-color: #073543; }
+.bg-navy-card { background-color: #0A3D4C; }
+.bg-mint { background-color: #00C9A7; }
+.bg-cream { background-color: #F4F6F4; }
+
+.text-mint { color: #00C9A7; }
+.text-navy { color: #03242E; }
+
+.btn-pill-mint {
+  background-color: #00C9A7;
+  color: #03242E;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.75rem 1.75rem;
+  transition: all 0.2s ease-in-out;
+}
+.btn-pill-mint:hover {
+  background-color: #00B395;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -5px rgba(0, 201, 167, 0.4);
+}
+
+.btn-pill-white {
+  background-color: #FFFFFF;
+  color: #03242E;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.75rem 1.75rem;
+  transition: all 0.2s ease-in-out;
+}
+.btn-pill-white:hover {
+  background-color: #F4F6F4;
+  transform: translateY(-1px);
+}
+
+.btn-pill-outline {
+  background-color: transparent;
+  color: #FFFFFF;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.75rem 1.75rem;
+  transition: all 0.2s ease-in-out;
+}
+.btn-pill-outline:hover {
+  border-color: #00C9A7;
+  color: #00C9A7;
+}
+
+.card-rounded-3xl {
+  border-radius: 1.75rem; /* 28px */
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground font-sans;
+    background-color: #03242E;
+    color: #FFFFFF;
   }
   html {
     font-family: var(--font-montserrat), system-ui, sans-serif;
