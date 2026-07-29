@@ -1,0 +1,11 @@
+{
+  "name": "cancer-courage-monorepo",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
+  "dependencies": {
+    "next": "16.2.10"
+  },
+  "scripts": {
+    "build": "cd frontend && pnpm run build"
+  }
+}
