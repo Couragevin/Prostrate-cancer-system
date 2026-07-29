@@ -17,42 +17,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-primary-foreground">
+    <>
       
-      {/* Clinician Top Navbar */}
-      <header className="bg-background/90 backdrop-blur-md border-b border-border sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 h-20 flex items-center justify-between">
-          
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-extrabold shadow-md">
-              <Stethoscope className="w-6 h-6" />
-            </div>
-            <div>
-              <span className="font-logo text-2xl tracking-wide text-foreground block">PROSCANCX</span>
-              <span className="text-[10px] font-semibold text-primary tracking-wider uppercase">Clinician Portal</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            <Link href="/">
-              <button className="btn-pill-outline text-xs font-semibold flex items-center gap-1.5 py-2 px-4">
-                <Home className="w-4 h-4" />
-                <span className="hidden sm:inline">Landing Page</span>
-              </button>
-            </Link>
-
-            <Link href="/login">
-              <button className="btn-pill-outline text-xs font-semibold text-rose-300 border-rose-500/30 hover:border-rose-500 flex items-center gap-1.5 py-2 px-4">
-                <LogOut className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Exit Portal</span>
-              </button>
-            </Link>
-          </div>
-
-        </div>
-      </header>
-
       {/* Main Dashboard Body */}
       <main className="max-w-7xl mx-auto px-6 sm:px-8 py-10 space-y-10">
         
@@ -142,6 +108,6 @@ export default function DashboardPage() {
         </div>
 
       </main>
-    </div>
+    </>
   );
 }

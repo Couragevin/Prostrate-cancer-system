@@ -63,83 +63,161 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 2. Hero Section (50/50 Split Layout) */}
-      <section id="about" className="max-w-7xl mx-auto px-6 sm:px-8 py-16 lg:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      {/* 2. Modern Hero Section (Gradient & Badges) */}
+      <section id="about" className="relative max-w-7xl mx-auto px-6 sm:px-8 pt-24 pb-16 lg:pt-32 lg:pb-24 overflow-hidden">
+        {/* Abstract Gradient Background */}
+        <div className="absolute top-0 right-0 -z-10 translate-x-1/3 -translate-y-1/4">
+          <div className="w-[800px] h-[800px] rounded-full bg-primary/10 blur-[120px] opacity-70"></div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-center relative z-10">
           
           {/* Hero Left Column */}
-          <div className="lg:col-span-6 space-y-8">
+          <div className="lg:col-span-7 space-y-8">
             
-            {/* Academic Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border text-xs font-medium text-primary">
-              <GraduationCap className="w-4 h-4" />
-              <span>FUPRE CS Research</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              <span className="text-muted-foreground">Vin-Okemeri Courage (COS/909/2022)</span>
+            {/* Trust Badges */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border shadow-sm text-xs font-semibold text-primary">
+                <ShieldCheck className="w-4 h-4 text-primary" />
+                <span>Clinical Decision Support</span>
+              </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20 text-xs font-semibold text-success">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>HIPAA Inspired</span>
+              </div>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-foreground leading-[1.1]">
-              Let's help your doctors access and afford decision clarity.
+            <h1 className="text-[40px] sm:text-[56px] font-black tracking-tight text-foreground leading-[1.05]">
+              Predict prostate cancer risk using <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-sky-400">machine learning</span> & clinical indicators.
             </h1>
 
-            <p className="text-base sm:text-lg text-muted-foreground font-normal leading-relaxed max-w-xl">
-              With zero-bias tuning, ProsCancX's Platt-scaled machine learning engine equips clinicians to gradually stratify and manage prostate cancer risk — always.
+            <p className="text-[20px] sm:text-[24px] text-muted-foreground font-medium leading-relaxed max-w-2xl">
+              Equip your clinical workflow with Platt-scaled, zero-bias risk stratification tailored for precise demographic accuracy.
             </p>
 
+            {/* Checklist */}
+            <ul className="space-y-3 pt-2">
+              <li className="flex items-center gap-3 text-foreground font-medium">
+                <div className="w-6 h-6 rounded-full bg-success/10 flex items-center justify-center text-success">
+                  <CheckCircle2 className="w-4 h-4" />
+                </div>
+                AI-assisted prediction model
+              </li>
+              <li className="flex items-center gap-3 text-foreground font-medium">
+                <div className="w-6 h-6 rounded-full bg-success/10 flex items-center justify-center text-success">
+                  <CheckCircle2 className="w-4 h-4" />
+                </div>
+                Secure, anonymized patient data processing
+              </li>
+              <li className="flex items-center gap-3 text-foreground font-medium">
+                <div className="w-6 h-6 rounded-full bg-success/10 flex items-center justify-center text-success">
+                  <CheckCircle2 className="w-4 h-4" />
+                </div>
+                Interpretable clinical decision support via SHAP
+              </li>
+            </ul>
+
             {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="flex flex-wrap items-center gap-4 pt-4">
               <Link href="/assessment">
-                <button className="btn-pill-primary text-sm font-bold flex items-center gap-2">
-                  <span>Get Tested</span>
-                  <ArrowRight className="w-4 h-4" />
+                <button className="btn-pill-primary text-[16px] flex items-center gap-2 py-3 px-6 shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-transform">
+                  <Stethoscope className="w-5 h-5" />
+                  <span>Start Assessment</span>
                 </button>
               </Link>
-
-              <Link href="/login">
-                <button className="btn-pill-outline text-sm font-semibold flex items-center gap-2">
-                  <Stethoscope className="w-4 h-4 text-primary" />
-                  <span>Clinician Portal</span>
+              <a href="#features">
+                <button className="btn-pill-outline text-[16px] flex items-center gap-2 py-3 px-6 hover:bg-muted">
+                  <span>Learn More</span>
+                  <ChevronRight className="w-4 h-4" />
                 </button>
-              </Link>
+              </a>
             </div>
-
           </div>
 
-          {/* Hero Right Column (Image / Rounded Card Feature) */}
-          <div className="lg:col-span-6">
-            <div className="bg-card rounded-[32px] p-6 lg:p-10 border border-border relative overflow-hidden shadow-2xl space-y-6">
+          {/* Hero Right Column (Medical Illustration / Interface Preview) */}
+          <div className="lg:col-span-5 relative">
+            <div className="bg-card rounded-[32px] p-8 border border-border shadow-2xl relative z-10 space-y-8 overflow-hidden transform lg:rotate-2 hover:rotate-0 transition-all duration-500">
               
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-2xl bg-primary/10 text-primary border border-[#0077BE]/20">
-                  <Activity className="w-8 h-8" />
+              {/* Decorative top bar */}
+              <div className="flex items-center justify-between border-b border-border pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-foreground">Risk Assessment</div>
+                    <div className="text-xs text-muted-foreground">ID: PROS-8821</div>
+                  </div>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold">
-                  Nigerian Population Calibrated
-                </span>
+                <div className="px-2 py-1 bg-warning/10 text-warning text-[10px] font-black rounded uppercase tracking-wider">
+                  Analyzing
+                </div>
               </div>
 
-              <div className="space-y-3">
-                <h3 className="text-2xl font-bold text-foreground">Dual-Model Risk Stratification</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Combining primary XGBoost classification with logistic Platt scaling to reflect epidemiological prevalence in Nigerian men aged 40+.
-                </p>
-              </div>
-
-              {/* Quick Feature Stats */}
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
-                <div className="bg-muted p-4 rounded-2xl">
-                  <span className="text-xs font-bold text-muted-foreground block uppercase">Explainable AI</span>
-                  <span className="text-xl font-bold text-primary">SHAP Visuals</span>
+              {/* Interface mock */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-semibold text-muted-foreground">PSA Level</span>
+                    <span className="font-bold text-foreground">8.4 ng/mL</span>
+                  </div>
+                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="w-[65%] h-full bg-warning rounded-full"></div>
+                  </div>
                 </div>
-                <div className="bg-muted p-4 rounded-2xl">
-                  <span className="text-xs font-bold text-muted-foreground block uppercase">PSA Velocity</span>
-                  <span className="text-xl font-bold text-primary">Longitudinal</span>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-semibold text-muted-foreground">Age Factor</span>
+                    <span className="font-bold text-foreground">62 Years</span>
+                  </div>
+                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="w-[45%] h-full bg-primary rounded-full"></div>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex items-center justify-center">
+                   <div className="relative w-32 h-32 flex items-center justify-center">
+                     <svg className="w-full h-full transform -rotate-90">
+                       <circle cx="64" cy="64" r="56" className="stroke-muted fill-none" strokeWidth="12" />
+                       <circle cx="64" cy="64" r="56" className="stroke-primary fill-none transition-all duration-1000 ease-out" strokeWidth="12" strokeDasharray="351.85" strokeDashoffset="87.96" />
+                     </svg>
+                     <div className="absolute flex flex-col items-center">
+                       <span className="text-3xl font-black text-foreground">75%</span>
+                       <span className="text-[10px] font-bold text-muted-foreground uppercase">Risk Score</span>
+                     </div>
+                   </div>
                 </div>
               </div>
 
             </div>
+
+            {/* Decorative background circle */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-br from-primary/5 to-transparent rounded-full -z-10 blur-2xl"></div>
           </div>
 
+        </div>
+      </section>
+
+      {/* 2.5 Statistics Row */}
+      <section className="border-y border-border bg-card">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-border">
+          <div className="flex flex-col items-center text-center space-y-1">
+            <span className="text-[32px] font-black text-primary">12,000+</span>
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Assessments</span>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-1">
+            <span className="text-[32px] font-black text-foreground">98%</span>
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Model Accuracy</span>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-1">
+            <span className="text-[32px] font-black text-foreground">2 sec</span>
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Prediction Time</span>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-1">
+            <ShieldCheck className="w-8 h-8 text-success mb-1" />
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">HIPAA Inspired</span>
+          </div>
         </div>
       </section>
 

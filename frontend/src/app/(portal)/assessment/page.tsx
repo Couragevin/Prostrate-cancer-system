@@ -5,10 +5,10 @@ import { ArrowLeft, Activity, ShieldCheck, LayoutDashboard } from "lucide-react"
 
 export default function AssessmentPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center relative selection:bg-primary selection:text-primary-foreground">
+    <div className="w-full max-w-4xl mx-auto py-6 md:py-12 flex flex-col relative z-10 selection:bg-primary selection:text-primary-foreground">
       
       {/* Container */}
-      <div className="w-full max-w-4xl space-y-8 relative z-10">
+      <div className="w-full space-y-8 relative z-10">
         
         {/* Navigation Bar */}
         <div className="flex items-center justify-between">
@@ -67,6 +67,6 @@ export default function AssessmentPage() {
         </div>
 
       </div>
-    </main>
+    </div>
   );
 }
