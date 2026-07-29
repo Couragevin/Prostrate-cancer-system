@@ -33,17 +33,17 @@ export function RiskCard({ riskScore, clinicalNarrative }: RiskCardProps) {
   }
 
   return (
-    <div className={`rounded-[28px] border ${borderClass} bg-[#0A3D4C] p-6 sm:p-8 space-y-6 shadow-xl`}>
+    <div className={`rounded-[28px] border ${borderClass} bg-muted p-6 sm:p-8 space-y-6 shadow-xl`}>
       
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-white/10">
+      <div className="flex items-center justify-between pb-4 border-b border-border">
         <div className="flex items-center gap-3">
           <div className={`p-2.5 rounded-xl ${bgClass}`}>
             <Icon className={`w-6 h-6 ${colorClass}`} />
           </div>
           <h3 className={`text-xl font-bold ${colorClass}`}>{riskLevel}</h3>
         </div>
-        <div className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-[#03242E] text-[#00C9A7] border border-white/10">
+        <div className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-background text-primary border border-border">
           <BrainCircuit className="w-3.5 h-3.5" />
           <span>Platt Scaled</span>
         </div>
@@ -52,15 +52,15 @@ export function RiskCard({ riskScore, clinicalNarrative }: RiskCardProps) {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
         
         {/* Metric Display Box */}
-        <div className="md:col-span-5 bg-[#03242E] p-6 rounded-2xl border border-white/10 text-center space-y-3">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+        <div className="md:col-span-5 bg-background p-6 rounded-2xl border border-border text-center space-y-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
             Calculated Risk Probability
           </span>
           <div className={`text-5xl font-black ${colorClass}`}>
             {percentage}%
           </div>
           {/* Risk Gauge Bar */}
-          <div className="w-full bg-[#073543] h-2.5 rounded-full overflow-hidden">
+          <div className="w-full bg-card h-2.5 rounded-full overflow-hidden">
             <div 
               className={`h-full ${barColorClass} transition-all duration-1000 ease-out`}
               style={{ width: `${numericPercentage}%` }}
@@ -70,12 +70,12 @@ export function RiskCard({ riskScore, clinicalNarrative }: RiskCardProps) {
 
         {/* Narrative Callout */}
         <div className="md:col-span-7 space-y-2">
-          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#00C9A7]">
+          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
             <FileText className="w-4 h-4" />
             <span>Automated Clinical Narrative</span>
           </div>
-          <div className="p-5 rounded-2xl bg-[#03242E]/70 border border-white/10">
-            <p className="text-slate-200 text-sm leading-relaxed font-normal">
+          <div className="p-5 rounded-2xl bg-background/70 border border-border">
+            <p className="text-muted-foreground text-sm leading-relaxed font-normal">
               {clinicalNarrative}
             </p>
           </div>

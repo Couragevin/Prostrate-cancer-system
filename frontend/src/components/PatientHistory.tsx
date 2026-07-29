@@ -42,32 +42,32 @@ export function PatientHistory({ patientId }: PatientHistoryProps) {
 
   if (loading) {
     return (
-      <div className="rounded-[28px] border border-white/10 bg-[#0A3D4C] p-8 text-center space-y-3">
-        <Activity className="w-8 h-8 text-[#00C9A7] animate-spin mx-auto" />
-        <p className="text-sm font-medium text-slate-300">Loading patient longitudinal history...</p>
+      <div className="rounded-[28px] border border-border bg-muted p-8 text-center space-y-3">
+        <Activity className="w-8 h-8 text-primary animate-spin mx-auto" />
+        <p className="text-sm font-medium text-muted-foreground">Loading patient longitudinal history...</p>
       </div>
     );
   }
 
   if (data.length === 0) {
     return (
-      <div className="rounded-[28px] border border-white/10 bg-[#0A3D4C] p-8 text-center space-y-4 text-white">
-        <div className="flex items-center gap-3 pb-4 border-b border-white/10">
-          <div className="p-2.5 rounded-xl bg-[#00C9A7]/10 text-[#00C9A7]">
+      <div className="rounded-[28px] border border-border bg-muted p-8 text-center space-y-4 text-foreground">
+        <div className="flex items-center gap-3 pb-4 border-b border-border">
+          <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
             <TrendingUp className="w-6 h-6" />
           </div>
           <div className="text-left">
             <h3 className="text-lg font-bold">Longitudinal PSA & Risk Trajectory</h3>
-            <p className="text-xs text-slate-300">Patient ID: <span className="font-mono text-[#00C9A7]">{patientId}</span></p>
+            <p className="text-xs text-muted-foreground">Patient ID: <span className="font-mono text-primary">{patientId}</span></p>
           </div>
         </div>
 
         <div className="py-6 space-y-2">
           <History className="w-10 h-10 text-slate-500 mx-auto" />
-          <p className="text-sm font-medium text-slate-300">
-            No historical entries recorded for patient <span className="font-mono text-[#00C9A7]">{patientId}</span>.
+          <p className="text-sm font-medium text-muted-foreground">
+            No historical entries recorded for patient <span className="font-mono text-primary">{patientId}</span>.
           </p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-muted-foreground">
             Submit a diagnostic assessment to log the initial clinical baseline.
           </p>
         </div>
@@ -76,22 +76,22 @@ export function PatientHistory({ patientId }: PatientHistoryProps) {
   }
 
   return (
-    <div className="rounded-[28px] border border-white/10 bg-[#0A3D4C] p-6 sm:p-8 space-y-6 shadow-xl text-white">
+    <div className="rounded-[28px] border border-border bg-muted p-6 sm:p-8 space-y-6 shadow-xl text-foreground">
       
-      <div className="flex items-center justify-between pb-4 border-b border-white/10">
+      <div className="flex items-center justify-between pb-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#00C9A7]/10 text-[#00C9A7]">
+          <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
             <TrendingUp className="w-6 h-6" />
           </div>
           <div>
             <h3 className="text-xl font-bold">Longitudinal PSA & Risk Trajectory</h3>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-muted-foreground">
               Tracking historical PSA velocity and predicted risk scores across clinical visits.
             </p>
           </div>
         </div>
 
-        <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-[#03242E] text-[#00C9A7] border border-white/10">
+        <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-background text-primary border border-border">
           <UserCheck className="w-3.5 h-3.5" />
           <span>Patient: {patientId}</span>
         </div>
@@ -127,7 +127,7 @@ export function PatientHistory({ patientId }: PatientHistoryProps) {
             <Tooltip 
               contentStyle={{ 
                 borderRadius: "16px", 
-                backgroundColor: "#03242E", 
+                backgroundColor: "#FFFFFF", 
                 borderColor: "rgba(255,255,255,0.15)",
                 color: "#FFFFFF",
                 boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)" 
