@@ -2,7 +2,7 @@
 
 import { Sidebar } from "@/components/Sidebar";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, ShieldCheck } from "lucide-react";
+import { Menu, Ribbon } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 
@@ -22,14 +22,12 @@ export default function PortalLayout({
       {/* Mobile Header & Sidebar */}
       <header className="md:hidden sticky top-0 z-30 flex items-center justify-between px-4 h-16 bg-card border-b border-border shadow-sm">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-6 h-6 text-primary" />
+          <Ribbon className="w-6 h-6 text-primary" />
           <span className="font-bold text-foreground">ProsCancX</span>
         </div>
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <button className="p-2 bg-muted text-foreground rounded-lg">
-              <Menu className="w-5 h-5" />
-            </button>
+          <SheetTrigger className="p-2 bg-muted text-foreground rounded-lg">
+            <Menu className="w-5 h-5" />
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-64 border-r border-border">
             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>

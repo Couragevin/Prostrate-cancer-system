@@ -81,7 +81,7 @@
   --border: #CBD5E1;
   --input: #E2E8F0;
   --ring: #2563EB;
-  --radius: 1.25rem;
+  --radius: 0rem;
 }
 
 .dark {
@@ -120,50 +120,52 @@
 }
 
 /* Custom Design System Utility Classes */
-.btn-pill-primary {
+.btn-geometric-primary {
   background-color: var(--primary);
   color: var(--primary-foreground);
   font-weight: 700;
-  border-radius: 9999px;
+  border-radius: 0;
   padding: 0.75rem 1.75rem;
   transition: all 0.2s ease-in-out;
+  border: 1px solid var(--primary);
 }
-.btn-pill-primary:hover {
-  filter: brightness(110%);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px -5px rgba(0, 119, 190, 0.4);
+.btn-geometric-primary:hover {
+  background-color: transparent;
+  color: var(--primary);
 }
 
-.btn-pill-white, .btn-pill-secondary {
+.btn-geometric-white, .btn-geometric-secondary {
   background-color: var(--background);
   color: var(--foreground);
   font-weight: 700;
-  border-radius: 9999px;
+  border-radius: 0;
   padding: 0.75rem 1.75rem;
   transition: all 0.2s ease-in-out;
   border: 1px solid var(--border);
 }
-.btn-pill-white:hover, .btn-pill-secondary:hover {
-  background-color: var(--secondary);
-  transform: translateY(-1px);
+.btn-geometric-white:hover, .btn-geometric-secondary:hover {
+  background-color: var(--foreground);
+  color: var(--background);
+  border-color: var(--foreground);
 }
 
-.btn-pill-outline {
+.btn-geometric-outline {
   background-color: transparent;
   color: var(--foreground);
   border: 1.5px solid var(--border);
   font-weight: 600;
-  border-radius: 9999px;
+  border-radius: 0;
   padding: 0.75rem 1.75rem;
   transition: all 0.2s ease-in-out;
 }
-.btn-pill-outline:hover {
+.btn-geometric-outline:hover {
   border-color: var(--primary);
   color: var(--primary);
 }
 
-.card-rounded-3xl {
-  border-radius: 1.75rem; /* 28px */
+.card-geometric {
+  border-radius: 0;
+  border: 1px solid var(--border);
 }
 
 @layer base {

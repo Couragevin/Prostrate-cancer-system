@@ -53,7 +53,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <Link href="/assessment">
-              <button className="btn-pill-primary text-xs font-bold shadow-lg flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2">
+              <button className="btn-geometric-primary text-xs font-bold flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2">
                 <span className="hidden sm:inline">Get Tested</span>
                 <span className="sm:hidden">Test</span>
                 <ChevronRight className="w-4 h-4" />
@@ -64,12 +64,8 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 2. Modern Hero Section (Gradient & Badges) */}
+      {/* 2. Modern Hero Section (Geometric) */}
       <section id="about" className="relative max-w-7xl mx-auto px-6 sm:px-8 pt-24 pb-16 lg:pt-32 lg:pb-24 overflow-hidden">
-        {/* Abstract Gradient Background */}
-        <div className="absolute top-0 right-0 -z-10 translate-x-1/3 -translate-y-1/4">
-          <div className="w-[800px] h-[800px] rounded-full bg-primary/10 blur-[120px] opacity-70"></div>
-        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-center relative z-10">
 
@@ -79,7 +75,7 @@ export default function Home() {
             {/* Trust Indicators */}
             <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-primary" />
+                <Ribbon className="w-4 h-4 text-primary" />
                 <span>Clinical Decision Support</span>
               </div>
               <div className="w-1.5 h-1.5 rounded-full bg-border"></div>
@@ -90,7 +86,7 @@ export default function Home() {
             </div>
 
             <h1 className="text-[40px] sm:text-[56px] font-black tracking-tight text-foreground leading-[1.05]">
-              Predict prostate cancer risk using <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-sky-400">machine learning</span> & clinical indicators.
+              Predict prostate cancer risk using <span className="text-primary">machine learning</span> & clinical indicators.
             </h1>
 
             <p className="text-[20px] sm:text-[24px] text-muted-foreground font-medium leading-relaxed max-w-2xl">
@@ -122,13 +118,13 @@ export default function Home() {
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-4">
               <Link href="/assessment">
-                <button className="btn-pill-primary text-[16px] flex items-center gap-2 py-3 px-6 shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-transform">
+                <button className="btn-geometric-primary text-[16px] flex items-center gap-2 py-3 px-6">
                   <Stethoscope className="w-5 h-5" />
                   <span>Start Assessment</span>
                 </button>
               </Link>
               <a href="#features">
-                <button className="btn-pill-outline text-[16px] flex items-center gap-2 py-3 px-6 hover:bg-muted">
+                <button className="btn-geometric-outline text-[16px] flex items-center gap-2 py-3 px-6">
                   <span>Learn More</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -138,7 +134,7 @@ export default function Home() {
 
           {/* Hero Right Column (Medical Illustration / Interface Preview) */}
           <div className="lg:col-span-5 relative">
-            <div className="bg-card rounded-[32px] p-8 border border-border shadow-2xl relative z-10 space-y-8 overflow-hidden transform lg:rotate-2 hover:rotate-0 transition-all duration-500">
+            <div className="bg-card p-8 border border-border relative z-10 space-y-8 overflow-hidden">
 
               {/* Decorative top bar */}
               <div className="flex items-center justify-between border-b border-border pb-4">
@@ -193,9 +189,6 @@ export default function Home() {
               </div>
 
             </div>
-
-            {/* Decorative background circle */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-br from-primary/5 to-transparent rounded-full -z-10 blur-2xl"></div>
           </div>
 
         </div>
@@ -223,8 +216,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. Soft Cream Features Section ("Seamless Healthcare at Your Fingertips") */}
-      <section id="features" className="bg-secondary text-secondary-foreground py-20 lg:py-28">
+      {/* 3. Soft Cream Features Section -> Geometric Structure */}
+      <section id="features" className="border-b border-border py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 space-y-16">
 
           <div className="max-w-3xl space-y-4">
@@ -241,7 +234,7 @@ export default function Home() {
 
             {/* Feature 1 */}
             <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+              <div className="w-14 h-14 border border-border bg-card text-foreground flex items-center justify-center">
                 <Stethoscope className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold text-foreground">Access XGBoost model</h3>
@@ -252,7 +245,7 @@ export default function Home() {
 
             {/* Feature 2 */}
             <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
+              <div className="w-14 h-14 border border-border bg-card text-foreground flex items-center justify-center">
                 <Shield className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold text-foreground">Platt-scaled precision</h3>
@@ -263,7 +256,7 @@ export default function Home() {
 
             {/* Feature 3 */}
             <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-teal-100 text-primary flex items-center justify-center">
+              <div className="w-14 h-14 border border-border bg-card text-foreground flex items-center justify-center">
                 <Dna className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold text-foreground">SHAP explainability</h3>
@@ -329,12 +322,12 @@ export default function Home() {
         {/* Testimonial Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-          <div className="bg-card p-6 sm:p-8 rounded-[24px] border border-border space-y-6 flex flex-col justify-between">
+          <div className="bg-card p-6 sm:p-8 border border-border space-y-6 flex flex-col justify-between">
             <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
               "The SHAP explainability charts give our oncology department total confidence in evaluating high-risk PSA thresholds."
             </p>
             <div className="flex items-center gap-3 pt-4 border-t border-border">
-              <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+              <div className="w-10 h-10 border border-border bg-card text-foreground flex items-center justify-center font-bold">
                 <UserCheck className="w-5 h-5" />
               </div>
               <div>
@@ -344,12 +337,12 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="bg-card p-6 sm:p-8 rounded-[24px] border border-border space-y-6 flex flex-col justify-between">
+          <div className="bg-card p-6 sm:p-8 border border-border space-y-6 flex flex-col justify-between">
             <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
               "Having a Platt-scaled calibration specific to Nigerian prevalence fixes the risk overestimation we used to see with Western tools."
             </p>
             <div className="flex items-center gap-3 pt-4 border-t border-border">
-              <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+              <div className="w-10 h-10 border border-border bg-card text-foreground flex items-center justify-center font-bold">
                 <UserCheck className="w-5 h-5" />
               </div>
               <div>
@@ -359,12 +352,12 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="bg-card p-6 sm:p-8 rounded-[24px] border border-border space-y-6 flex flex-col justify-between">
+          <div className="bg-card p-6 sm:p-8 border border-border space-y-6 flex flex-col justify-between">
             <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
               "Longitudinal tracking allows us to monitor PSA velocity over time, giving patients peace of mind and timely interventions."
             </p>
             <div className="flex items-center gap-3 pt-4 border-t border-border">
-              <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+              <div className="w-10 h-10 border border-border bg-card text-foreground flex items-center justify-center font-bold">
                 <UserCheck className="w-5 h-5" />
               </div>
               <div>
@@ -380,7 +373,7 @@ export default function Home() {
 
       {/* 6. CTA Banner Section */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 pb-20">
-        <div className="bg-card rounded-[32px] p-8 sm:p-16 border border-border text-center space-y-8 shadow-2xl relative overflow-hidden">
+        <div className="bg-card p-8 sm:p-16 border border-border text-center space-y-8 relative overflow-hidden">
 
           <h2 className="text-3xl sm:text-5xl font-bold text-foreground max-w-2xl mx-auto leading-tight">
             Your modern clinical decision engine.
@@ -392,7 +385,7 @@ export default function Home() {
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link href="/assessment">
-              <button className="btn-pill-primary text-sm font-bold flex items-center gap-2">
+              <button className="btn-geometric-primary text-sm font-bold flex items-center gap-2">
                 <span>Get Tested</span>
                 <ChevronRight className="w-4 h-4" />
               </button>

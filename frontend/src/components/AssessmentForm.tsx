@@ -307,7 +307,7 @@ export function AssessmentForm() {
                     name="dre_finding"
                     control={control}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className="h-14 bg-muted border-border text-foreground text-sm rounded-xl focus:ring-primary">
                           <SelectValue placeholder="Select Exam Finding" />
                         </SelectTrigger>
