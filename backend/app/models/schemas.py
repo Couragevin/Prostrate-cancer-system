@@ -11,8 +11,6 @@ class ClinicalInput(BaseModel):
     psa_density: float = Field(..., ge=0.0, description="PSA density (PSA / prostate volume).")
     family_history: bool = Field(default=False, description="Family history of prostate cancer.")
     bmi_category: str = Field(..., description="BMI category, e.g., 'Normal', 'Overweight', 'Obese'.")
-    hypertension: bool = Field(default=False, description="History of hypertension.")
-    diabetes: bool = Field(default=False, description="History of diabetes mellitus.")
     dre_finding: str = Field(..., description="Digital Rectal Exam (DRE) finding, e.g., 'Normal', 'Abnormal'.")
     
     model_config = ConfigDict(
@@ -23,8 +21,6 @@ class ClinicalInput(BaseModel):
                 "psa_density": 0.12,
                 "family_history": True,
                 "bmi_category": "Overweight",
-                "hypertension": False,
-                "diabetes": False,
                 "dre_finding": "Abnormal"
             }
         }

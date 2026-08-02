@@ -4,10 +4,21 @@ Author: Vin-Okemeri Courage (Matriculation Number: COS/909/2022)
 Affiliation: Computer Science Department at FUPRE (Federal University of Petroleum Resources Effurun), Delta State.
 """
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.router import api_router
 from app.core.config import settings
+from app.core.supabase import init_pool, close_pool
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    init_pool()
+    yield
+    # Shutdown
+    close_pool()
 
 app = FastAPI(
     title="Prostate Cancer Risk Stratification API",
@@ -18,6 +29,7 @@ app = FastAPI(
         "url": "https://fupre.edu.ng",
         "email": "student@fupre.edu.ng",
     },
+    lifespan=lifespan,
 )
 
 # Set all CORS enabled origins
