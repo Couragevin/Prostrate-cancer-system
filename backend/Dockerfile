@@ -16,6 +16,9 @@ COPY --from=builder /app/wheels /wheels
 COPY --from=builder /app/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
+# Pre-download HuggingFace models to avoid cold-start latency on Render
+RUN python -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='Couragevin/prostate-cancer-risk-models', filename='xgboost_model.joblib'); hf_hub_download(repo_id='Couragevin/prostate-cancer-risk-models', filename='logistic_regression_calibrated.joblib')"
+
 COPY ./app /app/app
 
 # Render assigns a dynamic port via the PORT environment variable
