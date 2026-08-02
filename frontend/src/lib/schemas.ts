@@ -6,8 +6,6 @@ export const clinicalInputSchema = z.object({
   psa_density: z.number().min(0, { message: "PSA density must be 0 or greater" }),
   family_history: z.boolean(),
   bmi_category: z.string().min(1, { message: "BMI category is required" }),
-  hypertension: z.boolean(),
-  diabetes: z.boolean(),
   dre_finding: z.string().min(1, { message: "DRE finding is required" }),
 });
 

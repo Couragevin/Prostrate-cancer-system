@@ -58,8 +58,6 @@ export function AssessmentForm() {
       age_band: "50-59",
       bmi_category: "Normal",
       family_history: false,
-      hypertension: false,
-      diabetes: false,
     },
   });
 
@@ -83,7 +81,7 @@ export function AssessmentForm() {
   const nextStep = async () => {
     let fieldsToValidate: (keyof ClinicalInput)[] = [];
     if (currentStep === 0) fieldsToValidate = ["age_band", "bmi_category"];
-    if (currentStep === 1) fieldsToValidate = ["family_history", "hypertension", "diabetes"];
+    if (currentStep === 1) fieldsToValidate = ["family_history"];
     if (currentStep === 2) fieldsToValidate = ["psa_level", "psa_density", "dre_finding"];
 
     const isStepValid = await trigger(fieldsToValidate);
@@ -230,32 +228,6 @@ export function AssessmentForm() {
                     </div>
                   </div>
                   <input type="checkbox" {...register("family_history")} className="w-5 h-5 rounded text-primary accent-primary" />
-                </label>
-
-                <label className="flex items-center justify-between p-5 bg-card border-2 border-border hover:border-primary/50 cursor-pointer rounded-2xl transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-rose-500 group-has-[:checked]:bg-rose-500 group-has-[:checked]:text-white transition-colors">
-                      <HeartPulse className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-foreground">Hypertension</h4>
-                      <p className="text-xs text-muted-foreground">Chronic high blood pressure</p>
-                    </div>
-                  </div>
-                  <input type="checkbox" {...register("hypertension")} className="w-5 h-5 rounded text-primary accent-primary" />
-                </label>
-
-                <label className="flex items-center justify-between p-5 bg-card border-2 border-border hover:border-primary/50 cursor-pointer rounded-2xl transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-warning group-has-[:checked]:bg-warning group-has-[:checked]:text-white transition-colors">
-                      <Activity className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-foreground">Diabetes</h4>
-                      <p className="text-xs text-muted-foreground">Type 1 or Type 2 Diabetes Mellitus</p>
-                    </div>
-                  </div>
-                  <input type="checkbox" {...register("diabetes")} className="w-5 h-5 rounded text-primary accent-primary" />
                 </label>
 
               </div>

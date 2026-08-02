@@ -1,7 +1,7 @@
 import { AssessmentForm } from "@/components/AssessmentForm";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Link from "next/link";
-import { ArrowLeft, Activity, ShieldCheck, LayoutDashboard } from "lucide-react";
+import { ArrowLeft, Activity, ShieldCheck, Ribbon } from "lucide-react";
 
 export default function AssessmentPage() {
   return (
@@ -22,20 +22,13 @@ export default function AssessmentPage() {
 
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <Link 
-              href="/dashboard" 
-              className="text-xs font-semibold text-primary hover:underline flex items-center gap-1.5"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span className="hidden sm:inline">Clinician Dashboard</span>
-            </Link>
           </div>
         </div>
 
         {/* Page Title Header */}
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-card border border-border text-primary text-xs font-bold">
-            <ShieldCheck className="w-4 h-4" />
+            <Ribbon className="w-4 h-4 fill-primary" />
             <span>Clinical Diagnostic Engine</span>
           </div>
 

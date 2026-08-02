@@ -1,38 +1,39 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { 
-  ShieldCheck, 
-  Stethoscope, 
-  TestTube, 
-  Dna, 
-  HeartPulse, 
-  Activity, 
-  Sparkles, 
-  ArrowRight, 
-  GraduationCap, 
-  CheckCircle2, 
-  BrainCircuit, 
-  TrendingUp, 
+import {
+  ShieldCheck,
+  Stethoscope,
+  TestTube,
+  Dna,
+  HeartPulse,
+  Activity,
+  Sparkles,
+  ArrowRight,
+  GraduationCap,
+  CheckCircle2,
+  BrainCircuit,
+  TrendingUp,
   ChevronRight,
   Shield,
   FileText,
   UserCheck,
-  Quote
+  Quote,
+  Ribbon
 } from "lucide-react";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-primary-foreground">
-      
+
       {/* 1. Header / Navbar */}
       <header className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 h-20 flex items-center justify-between">
-          
+
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-extrabold shadow-md group-hover:scale-105 transition-transform">
-              <ShieldCheck className="w-6 h-6" />
+              <Ribbon className="w-6 h-6" />
             </div>
             <div>
               <span className="font-logo text-xl sm:text-2xl tracking-wide text-foreground block">PROSCANCX</span>
@@ -71,18 +72,19 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-center relative z-10">
-          
+
           {/* Hero Left Column */}
           <div className="lg:col-span-7 space-y-8">
-            
-            {/* Trust Badges */}
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border shadow-sm text-xs font-semibold text-primary">
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+              <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-primary" />
                 <span>Clinical Decision Support</span>
               </div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20 text-xs font-semibold text-success">
-                <CheckCircle2 className="w-4 h-4" />
+              <div className="w-1.5 h-1.5 rounded-full bg-border"></div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-success" />
                 <span>HIPAA Inspired</span>
               </div>
             </div>
@@ -137,7 +139,7 @@ export default function Home() {
           {/* Hero Right Column (Medical Illustration / Interface Preview) */}
           <div className="lg:col-span-5 relative">
             <div className="bg-card rounded-[32px] p-8 border border-border shadow-2xl relative z-10 space-y-8 overflow-hidden transform lg:rotate-2 hover:rotate-0 transition-all duration-500">
-              
+
               {/* Decorative top bar */}
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <div className="flex items-center gap-3">
@@ -177,16 +179,16 @@ export default function Home() {
                 </div>
 
                 <div className="pt-4 flex items-center justify-center">
-                   <div className="relative w-32 h-32 flex items-center justify-center">
-                     <svg className="w-full h-full transform -rotate-90">
-                       <circle cx="64" cy="64" r="56" className="stroke-muted fill-none" strokeWidth="12" />
-                       <circle cx="64" cy="64" r="56" className="stroke-primary fill-none transition-all duration-1000 ease-out" strokeWidth="12" strokeDasharray="351.85" strokeDashoffset="87.96" />
-                     </svg>
-                     <div className="absolute flex flex-col items-center">
-                       <span className="text-3xl font-black text-foreground">75%</span>
-                       <span className="text-[10px] font-bold text-muted-foreground uppercase">Risk Score</span>
-                     </div>
-                   </div>
+                  <div className="relative w-32 h-32 flex items-center justify-center">
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle cx="64" cy="64" r="56" className="stroke-muted fill-none" strokeWidth="12" />
+                      <circle cx="64" cy="64" r="56" className="stroke-primary fill-none transition-all duration-1000 ease-out" strokeWidth="12" strokeDasharray="351.85" strokeDashoffset="87.96" />
+                    </svg>
+                    <div className="absolute flex flex-col items-center">
+                      <span className="text-3xl font-black text-foreground">75%</span>
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase">Risk Score</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -224,7 +226,7 @@ export default function Home() {
       {/* 3. Soft Cream Features Section ("Seamless Healthcare at Your Fingertips") */}
       <section id="features" className="bg-secondary text-secondary-foreground py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 space-y-16">
-          
+
           <div className="max-w-3xl space-y-4">
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground leading-tight">
               Seamless healthcare decisioning at your fingertips.
@@ -236,7 +238,7 @@ export default function Home() {
 
           {/* 3 Column Feature Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            
+
             {/* Feature 1 */}
             <div className="space-y-4">
               <div className="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
@@ -274,7 +276,7 @@ export default function Home() {
 
           {/* 4. Browse Clinical Biomarkers Section (Light Cream Continued) */}
           <div id="biomarkers" className="pt-16 border-t border-border space-y-12">
-            
+
             <div className="max-w-2xl space-y-3">
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
                 Browse clinical indicators.
@@ -314,7 +316,7 @@ export default function Home() {
 
       {/* 5. Clinical Trust Section ("Clinicians trust Cancer Courage.") */}
       <section id="testimonials" className="max-w-7xl mx-auto px-6 sm:px-8 py-20 lg:py-28 space-y-16">
-        
+
         <div className="max-w-3xl space-y-4">
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground leading-tight">
             Clinicians trust ProsCancX.
@@ -326,7 +328,7 @@ export default function Home() {
 
         {/* Testimonial Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
+
           <div className="bg-card p-6 sm:p-8 rounded-[24px] border border-border space-y-6 flex flex-col justify-between">
             <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
               "The SHAP explainability charts give our oncology department total confidence in evaluating high-risk PSA thresholds."
@@ -379,7 +381,7 @@ export default function Home() {
       {/* 6. CTA Banner Section */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 pb-20">
         <div className="bg-card rounded-[32px] p-8 sm:p-16 border border-border text-center space-y-8 shadow-2xl relative overflow-hidden">
-          
+
           <h2 className="text-3xl sm:text-5xl font-bold text-foreground max-w-2xl mx-auto leading-tight">
             Your modern clinical decision engine.
           </h2>
@@ -396,11 +398,6 @@ export default function Home() {
               </button>
             </Link>
 
-            <Link href="/login">
-              <button className="btn-pill-white text-sm font-bold flex items-center gap-2">
-                <span>Clinician Portal</span>
-              </button>
-            </Link>
           </div>
 
         </div>
@@ -409,9 +406,9 @@ export default function Home() {
       {/* 7. Footer */}
       <footer className="border-t border-border bg-background py-12">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-muted-foreground text-xs font-medium">
-          
+
           <div className="flex items-center gap-3">
-            <ShieldCheck className="w-5 h-5 text-primary" />
+            <Ribbon className="w-5 h-5 text-primary fill-primary" />
             <span className="font-logo text-lg text-foreground">PROSCANCX</span>
           </div>
 
