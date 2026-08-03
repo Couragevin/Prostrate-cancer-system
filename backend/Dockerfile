@@ -20,8 +20,7 @@ RUN pip install --no-cache /wheels/*
 ARG HF_TOKEN
 ENV HF_TOKEN=${HF_TOKEN}
 
-# Pre-download HuggingFace models to avoid cold-start latency on Render
-RUN python -c "from huggingface_hub import hf_hub_download; import os; token = os.environ.get('HF_TOKEN'); hf_hub_download(repo_id='Couragevin/prostate-cancer-risk-models', filename='xgboost_model.joblib', token=token); hf_hub_download(repo_id='Couragevin/prostate-cancer-risk-models', filename='logistic_regression_calibrated.joblib', token=token)"
+# The models will be downloaded at runtime in app/ml/inference.py
 
 COPY ./app /app/app
 
