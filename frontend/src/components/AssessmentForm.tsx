@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { clinicalInputSchema, type ClinicalInput } from "@/lib/schemas";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { api } from "@/lib/api";
+import axios from "axios";
 import { RiskCard } from "./RiskCard";
 import { ShapBarChart } from "./ShapBarChart";
 import { AnimatedLoader } from "./AnimatedLoader";
@@ -85,7 +87,11 @@ export function AssessmentForm() {
     if (currentStep === 2) fieldsToValidate = ["psa_level", "psa_density", "dre_finding"];
 
     const isStepValid = await trigger(fieldsToValidate);
-    if (isStepValid) setCurrentStep((prev) => prev + 1);
+    if (isStepValid) {
+      setCurrentStep((prev) => prev + 1);
+    } else {
+      toast.error("Please fix the validation errors before proceeding.");
+    }
   };
 
   const prevStep = () => {
@@ -96,10 +102,18 @@ export function AssessmentForm() {
     setCurrentStep(3); // Move to prediction step
     setLoading(true);
     try {
-      const response = await api.post("/api/v1/predict", data);
+      const response = await api.post("/api/v1/predict/", data);
       setResult(response.data);
+      toast.success("Analysis complete");
     } catch (error) {
       console.error("Prediction failed:", error);
+      let errorMessage = "Prediction failed. Please try again.";
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.detail || error.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
       // fallback step on error
       setCurrentStep(2);
     } finally {
@@ -374,8 +388,8 @@ export function AssessmentForm() {
                   </div>
 
                   <RiskCard 
-                    riskScore={result.risk_score} 
-                    clinicalNarrative={result.clinical_narrative} 
+                    riskScore={result.xgboost_probability ?? result.logistic_risk_score ?? 0} 
+                    clinicalNarrative={result.shap_summary} 
                   />
                   
                   {result.shap_values && (

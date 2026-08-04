@@ -1,9 +1,10 @@
 export interface PredictionResponse {
-  risk_score: number;
+  xgboost_probability?: number;
+  logistic_risk_score?: number;
   risk_category?: string;
-  clinical_narrative: string;
+  shap_summary: string;
   shap_values?: Record<string, number>;
-  record_id?: string;
+  patient_id?: string;
 }
 
 export interface PatientHistoryRecord {
