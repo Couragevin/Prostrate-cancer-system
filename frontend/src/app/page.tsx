@@ -46,7 +46,6 @@ export default function Home() {
             <a href="#about" className="hover:text-primary transition-colors">About</a>
             <a href="#features" className="hover:text-primary transition-colors">Methodology</a>
             <a href="#biomarkers" className="hover:text-primary transition-colors">Biomarkers</a>
-            <a href="#testimonials" className="hover:text-primary transition-colors">Clinicians</a>
           </nav>
 
           {/* Header Action Button & Theme Toggle */}
@@ -307,69 +306,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. Clinical Trust Section ("Clinicians trust Cancer Courage.") */}
-      <section id="testimonials" className="max-w-7xl mx-auto px-6 sm:px-8 py-20 lg:py-28 space-y-16">
-
-        <div className="max-w-3xl space-y-4">
-          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground leading-tight">
-            Clinicians trust ProsCancX.
-          </h2>
-          <p className="text-base text-muted-foreground font-normal">
-            Designed for seamless integration into oncology workflows, providing clear clinical reasoning narratives alongside quantitative predictions.
-          </p>
-        </div>
-
-        {/* Testimonial Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-          <div className="bg-card p-6 sm:p-8 border border-border space-y-6 flex flex-col justify-between">
-            <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
-              "The SHAP explainability charts give our oncology department total confidence in evaluating high-risk PSA thresholds."
-            </p>
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
-              <div className="w-10 h-10 border border-border bg-card text-foreground flex items-center justify-center font-bold">
-                <UserCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-foreground">Dr. A. Bello</h4>
-                <p className="text-xs text-muted-foreground">Consultant Urologist</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card p-6 sm:p-8 border border-border space-y-6 flex flex-col justify-between">
-            <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
-              "Having a Platt-scaled calibration specific to Nigerian prevalence fixes the risk overestimation we used to see with Western tools."
-            </p>
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
-              <div className="w-10 h-10 border border-border bg-card text-foreground flex items-center justify-center font-bold">
-                <UserCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-foreground">Dr. E. Okon</h4>
-                <p className="text-xs text-muted-foreground">Clinical Oncologist</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card p-6 sm:p-8 border border-border space-y-6 flex flex-col justify-between">
-            <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
-              "Longitudinal tracking allows us to monitor PSA velocity over time, giving patients peace of mind and timely interventions."
-            </p>
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
-              <div className="w-10 h-10 border border-border bg-card text-foreground flex items-center justify-center font-bold">
-                <UserCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-foreground">Dr. C. Nwosu</h4>
-                <p className="text-xs text-muted-foreground">Senior Pathologist</p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </section>
 
       {/* 6. CTA Banner Section */}
       <section className="max-w-7xl mx-auto px-6 sm:px-8 pb-20">
