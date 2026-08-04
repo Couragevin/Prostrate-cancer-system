@@ -61,8 +61,8 @@ export function AssessmentForm() {
     },
   });
 
-  const handleAgeChange = (val: number[]) => {
-    const age = val[0];
+  const handleAgeChange = (val: number | readonly number[]) => {
+    const age = Array.isArray(val) ? val[0] : (val as number);
     setAgeContinuous(age);
     if (age < 50) setValue("age_band", "40-49");
     else if (age < 60) setValue("age_band", "50-59");
@@ -70,8 +70,8 @@ export function AssessmentForm() {
     else setValue("age_band", "70+");
   };
 
-  const handleBmiChange = (val: number[]) => {
-    const bmi = val[0];
+  const handleBmiChange = (val: number | readonly number[]) => {
+    const bmi = Array.isArray(val) ? val[0] : (val as number);
     setBmiContinuous(bmi);
     if (bmi < 25) setValue("bmi_category", "Normal");
     else if (bmi < 30) setValue("bmi_category", "Overweight");
