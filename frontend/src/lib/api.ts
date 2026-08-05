@@ -1,14 +1,32 @@
 import axios from "axios";
 
-// Default to localhost:8000 for local development.
-//
-// Trailing slashes are stripped. Axios concatenates baseURL with the request
-// path, so a NEXT_PUBLIC_API_URL of "https://api.example.com/" produces
-// "https://api.example.com//api/v1/predict/", which FastAPI answers with a 404
-// {"detail":"Not Found"}. That is invisible locally whenever the local env var
-// happens to be written without the slash, and it is baked into the client
-// bundle at build time, so it can only be caught against a real deployment.
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
+/**
+ * Normalises NEXT_PUBLIC_API_URL to a bare origin.
+ *
+ * Request paths in this module already carry the `/api/v1` prefix, so the base
+ * URL must not repeat it. Both of these misconfigurations produced a silent
+ * 404 {"detail":"Not Found"} in production while the API itself was healthy:
+ *
+ *   "https://api.example.com/"        -> ".../api/v1/predict/" doubled slash
+ *   "https://api.example.com/api/v1"  -> ".../api/v1/api/v1/predict/"
+ *
+ * The value is inlined into the client bundle at build time, so neither form
+ * reproduces locally when the local .env happens to be written correctly -
+ * they surface only against a real deployment. Accepting either spelling here
+ * is cheaper than depending on a hosting dashboard being set precisely right.
+ */
+export function normalizeApiBaseUrl(raw: string): string {
+  return raw
+    .trim()
+    .replace(/\/+$/, "")
+    .replace(/\/api\/v\d+$/i, "")
+    .replace(/\/+$/, "");
+}
+
+// Default to localhost:8000 for local development
+const API_BASE_URL = normalizeApiBaseUrl(
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+);
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
