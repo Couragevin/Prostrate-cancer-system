@@ -143,6 +143,26 @@ test.describe('Assessment wizard', () => {
     ).toBeVisible();
   });
 
+  test('requests a single-slash predict path', async ({ page }) => {
+    // Regression test: a trailing slash on NEXT_PUBLIC_API_URL produced
+    // "<host>//api/v1/predict/", which FastAPI answers with 404 "Not Found".
+    // It reproduced only in the deployed build, since the value is inlined at
+    // build time from whatever the hosting provider has configured.
+    let requestedUrl = '';
+    await page.route(PREDICT_ROUTE, async (route) => {
+      requestedUrl = route.request().url();
+      await route.fulfill({ json: MOCK_RESULT });
+    });
+
+    await fillWizard(page);
+    await page.getByRole('button', { name: 'Run Prediction' }).click();
+    await expect(page.getByRole('heading', { name: 'Analysis Complete' })).toBeVisible({ timeout: 15000 });
+
+    expect(requestedUrl).toContain('/api/v1/predict/');
+    // No doubled slash anywhere after the scheme.
+    expect(requestedUrl.replace(/^https?:\/\//, '')).not.toContain('//');
+  });
+
   test('warns instead of silently ignoring an invalid submission', async ({ page }) => {
     await page.goto('/assessment');
     await page.getByRole('button', { name: 'Continue' }).click();

@@ -1,7 +1,14 @@
 import axios from "axios";
 
-// Default to localhost:8000 for local development
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// Default to localhost:8000 for local development.
+//
+// Trailing slashes are stripped. Axios concatenates baseURL with the request
+// path, so a NEXT_PUBLIC_API_URL of "https://api.example.com/" produces
+// "https://api.example.com//api/v1/predict/", which FastAPI answers with a 404
+// {"detail":"Not Found"}. That is invisible locally whenever the local env var
+// happens to be written without the slash, and it is baked into the client
+// bundle at build time, so it can only be caught against a real deployment.
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
