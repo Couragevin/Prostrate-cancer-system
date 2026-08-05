@@ -16,8 +16,8 @@ const anton = Anton({
 });
 
 export const metadata: Metadata = {
-  title: "ProsCancX | Prostate Cancer Risk Stratification",
-  description: "Clinical decision support & explainable ML risk assessment tailored for Nigerian population prevalence.",
+  title: "ProsCancX | Prostate Cancer Risk Check",
+  description: "A simple prostate cancer risk check for Nigerian men using age, health history, PSA results, and exam findings.",
 };
 
 import { Toaster } from "@/components/ui/sonner";

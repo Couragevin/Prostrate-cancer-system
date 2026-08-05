@@ -15,7 +15,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 // Add each back as its route lands.
 const navItems = [
   { name: "Home", href: "/", icon: Home },
-  { name: "Risk Assessment", href: "/assessment", icon: TestTube },
+  { name: "Risk Check", href: "/assessment", icon: TestTube },
 ];
 
 export function Sidebar({ className = "" }: { className?: string }) {
@@ -37,7 +37,7 @@ export function Sidebar({ className = "" }: { className?: string }) {
       {/* Navigation Links */}
       <div className="flex-1 overflow-y-auto py-6 px-4 space-y-1.5">
         <div className="px-2 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          Clinician Portal
+          Clinic Portal
         </div>
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
@@ -68,7 +68,7 @@ export function Sidebar({ className = "" }: { className?: string }) {
         
         <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium text-rose-500 hover:bg-rose-500/10 hover:text-rose-600">
           <LogOut className="w-4 h-4" />
-          Exit Portal
+          Exit
         </Link>
       </div>
 

@@ -9,24 +9,24 @@ export const DRE_FINDINGS = ["Normal", "Suspicious", "Abnormal"] as const;
 
 export const clinicalInputSchema = z.object({
   age_band: z.enum(AGE_BANDS, {
-    errorMap: () => ({ message: "Age band is required" }),
+    errorMap: () => ({ message: "Choose an age group" }),
   }),
   psa_level: z
-    .number({ invalid_type_error: "Enter the total serum PSA in ng/mL" })
-    .min(0, { message: "PSA level must be 0 or greater" })
-    .max(1000, { message: "PSA level is unusually high, please verify (max 1000)" }),
+    .number({ invalid_type_error: "Enter the PSA blood test result in ng/mL" })
+    .min(0, { message: "PSA blood test result must be 0 or greater" })
+    .max(1000, { message: "This PSA value is very high. Please check it (max 1000)" }),
   psa_density: z
     .number({ invalid_type_error: "Enter the PSA density" })
     .min(0, { message: "PSA density must be 0 or greater" })
-    .max(100, { message: "PSA density is unusually high, please verify (max 100)" }),
+    .max(100, { message: "This PSA density is very high. Please check it (max 100)" }),
   family_history: z.boolean(),
   bmi_category: z.enum(BMI_CATEGORIES, {
-    errorMap: () => ({ message: "BMI category is required" }),
+    errorMap: () => ({ message: "Choose a BMI group" }),
   }),
   hypertension: z.boolean(),
   diabetes: z.boolean(),
   dre_finding: z.enum(DRE_FINDINGS, {
-    errorMap: () => ({ message: "Select a DRE finding" }),
+    errorMap: () => ({ message: "Choose the prostate exam result" }),
   }),
 });
 

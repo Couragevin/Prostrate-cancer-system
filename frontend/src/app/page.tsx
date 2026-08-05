@@ -1,24 +1,13 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   ShieldCheck,
   Stethoscope,
-  TestTube,
   Dna,
-  HeartPulse,
   Activity,
-  Sparkles,
-  ArrowRight,
-  GraduationCap,
   CheckCircle2,
-  BrainCircuit,
-  TrendingUp,
   ChevronRight,
   Shield,
-  FileText,
-  UserCheck,
-  Quote,
   Ribbon
 } from "lucide-react";
 
@@ -37,15 +26,15 @@ export default function Home() {
             </div>
             <div>
               <span className="font-logo text-xl sm:text-2xl tracking-wide text-foreground block">PROSCANCX</span>
-              <span className="text-[10px] font-semibold text-primary tracking-wider uppercase hidden sm:block">Better Medical Engine</span>
+              <span className="text-[10px] font-semibold text-primary tracking-wider uppercase hidden sm:block">Prostate Risk Support</span>
             </div>
           </Link>
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#about" className="hover:text-primary transition-colors">About</a>
-            <a href="#features" className="hover:text-primary transition-colors">Methodology</a>
-            <a href="#biomarkers" className="hover:text-primary transition-colors">Biomarkers</a>
+            <a href="#features" className="hover:text-primary transition-colors">How It Works</a>
+            <a href="#biomarkers" className="hover:text-primary transition-colors">Test Fields</a>
           </nav>
 
           {/* Header Action Button & Theme Toggle */}
@@ -53,8 +42,8 @@ export default function Home() {
             <ThemeToggle />
             <Link href="/assessment">
               <button className="btn-geometric-primary text-xs font-bold flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2">
-                <span className="hidden sm:inline">Get Tested</span>
-                <span className="sm:hidden">Test</span>
+                <span className="hidden sm:inline">Start Check</span>
+                <span className="sm:hidden">Check</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </Link>
@@ -75,21 +64,21 @@ export default function Home() {
             <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">
               <div className="flex items-center gap-2">
                 <Ribbon className="w-4 h-4 text-primary" />
-                <span>Clinical Decision Support</span>
+                <span>Supports Clinic Decisions</span>
               </div>
               <div className="w-1.5 h-1.5 rounded-full bg-border"></div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-success" />
-                <span>HIPAA Inspired</span>
+                <span>Privacy Minded</span>
               </div>
             </div>
 
             <h1 className="text-[40px] sm:text-[56px] font-black tracking-tight text-foreground leading-[1.05]">
-              Predict prostate cancer risk using <span className="text-primary">machine learning</span> & clinical indicators.
+              Estimate prostate cancer risk using <span className="text-primary">patient details</span> and test results.
             </h1>
 
             <p className="text-[20px] sm:text-[24px] text-muted-foreground font-medium leading-relaxed max-w-2xl">
-              Equip your clinical workflow with Platt-scaled, zero-bias risk stratification tailored for precise demographic accuracy.
+              Enter age, health history, PSA results, and exam findings. The tool gives a clear risk level and shows which details affected the result.
             </p>
 
             {/* Checklist */}
@@ -98,19 +87,19 @@ export default function Home() {
                 <div className="w-6 h-6 rounded-full bg-success/10 flex items-center justify-center text-success">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
-                AI-assisted prediction model
+                AI-supported risk estimate
               </li>
               <li className="flex items-center gap-3 text-foreground font-medium">
                 <div className="w-6 h-6 rounded-full bg-success/10 flex items-center justify-center text-success">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
-                Secure, anonymized patient data processing
+                No patient names needed
               </li>
               <li className="flex items-center gap-3 text-foreground font-medium">
                 <div className="w-6 h-6 rounded-full bg-success/10 flex items-center justify-center text-success">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
-                Interpretable clinical decision support via SHAP
+                Shows what pushed the result up or down
               </li>
             </ul>
 
@@ -119,12 +108,12 @@ export default function Home() {
               <Link href="/assessment">
                 <button className="btn-geometric-primary text-[16px] flex items-center gap-2 py-3 px-6">
                   <Stethoscope className="w-5 h-5" />
-                  <span>Start Assessment</span>
+                  <span>Start Risk Check</span>
                 </button>
               </Link>
               <a href="#features">
                 <button className="btn-geometric-outline text-[16px] flex items-center gap-2 py-3 px-6">
-                  <span>Learn More</span>
+                  <span>How It Works</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </a>
@@ -142,7 +131,7 @@ export default function Home() {
                     <Activity className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-foreground">Risk Assessment</div>
+                    <div className="text-sm font-bold text-foreground">Risk Check</div>
                     <div className="text-xs text-muted-foreground">ID: PROS-8821</div>
                   </div>
                 </div>
@@ -198,7 +187,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 sm:px-8 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-border">
           <div className="flex flex-col items-center text-center space-y-1">
             <span className="text-[32px] font-black text-primary">12,000+</span>
-            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Assessments</span>
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Risk Checks</span>
           </div>
           <div className="flex flex-col items-center text-center space-y-1">
             <span className="text-[32px] font-black text-foreground">98%</span>
@@ -206,11 +195,11 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-center text-center space-y-1">
             <span className="text-[32px] font-black text-foreground">2 sec</span>
-            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Prediction Time</span>
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Check Time</span>
           </div>
           <div className="flex flex-col items-center text-center space-y-1">
             <ShieldCheck className="w-8 h-8 text-success mb-1" />
-            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">HIPAA Inspired</span>
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Privacy Minded</span>
           </div>
         </div>
       </section>
@@ -221,10 +210,10 @@ export default function Home() {
 
           <div className="max-w-3xl space-y-4">
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground leading-tight">
-              Seamless healthcare decisioning at your fingertips.
+              Clear prostate risk support for everyday clinic use.
             </h2>
             <p className="text-base text-muted-foreground font-normal">
-              Designed specifically to resolve non-interpretable black-box predictions and static single-visit monitoring.
+              Built to turn key test results into an easy-to-read risk level and explanation.
             </p>
           </div>
 
@@ -236,9 +225,9 @@ export default function Home() {
               <div className="w-14 h-14 border border-border bg-card text-foreground flex items-center justify-center">
                 <Stethoscope className="w-7 h-7" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Access XGBoost model</h3>
+              <h3 className="text-xl font-bold text-foreground">Uses a trained model</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                We make it easy to assess diagnostic risk. Compute real-time localized risk scores based on diagnostic biomarkers.
+                The check reviews age, health history, PSA values, and exam findings to estimate risk.
               </p>
             </div>
 
@@ -247,9 +236,9 @@ export default function Home() {
               <div className="w-14 h-14 border border-border bg-card text-foreground flex items-center justify-center">
                 <Shield className="w-7 h-7" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Platt-scaled precision</h3>
+              <h3 className="text-xl font-bold text-foreground">Built for the target group</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Raw model probabilities are recalibrated using population-specific epidemiological prevalence for Nigerian men.
+                The result is designed around prostate cancer screening data for Nigerian men.
               </p>
             </div>
 
@@ -258,45 +247,45 @@ export default function Home() {
               <div className="w-14 h-14 border border-border bg-card text-foreground flex items-center justify-center">
                 <Dna className="w-7 h-7" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">SHAP explainability</h3>
+              <h3 className="text-xl font-bold text-foreground">Shows the main reasons</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Visual attribution charts break down exactly how Age, PSA, and DRE exam findings contribute to the risk score.
+                The chart shows which fields raised or lowered the risk score the most.
               </p>
             </div>
 
           </div>
 
-          {/* 4. Browse Clinical Biomarkers Section (Light Cream Continued) */}
+          {/* 4. Test Fields Section */}
           <div id="biomarkers" className="pt-16 border-t border-border space-y-12">
 
             <div className="max-w-2xl space-y-3">
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-                Browse clinical indicators.
+                Test fields used in the check.
               </h2>
               <p className="text-sm text-muted-foreground">
-                Our model evaluates key biomarkers, eliminating diagnostic ambiguity without requiring invasive procedures upfront.
+                The check uses a small set of common details from the patient record, blood test, and prostate exam.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="space-y-2">
-                <h4 className="text-lg font-bold text-foreground">PSA Density & Level</h4>
+                <h4 className="text-lg font-bold text-foreground">PSA level and PSA density</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Evaluates total serum PSA and density ratios to identify abnormal prostate tissue proliferation early.
+                  PSA level comes from the blood test. PSA density compares PSA level with prostate size.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <h4 className="text-lg font-bold text-foreground">DRE Clinical Findings</h4>
+                <h4 className="text-lg font-bold text-foreground">Prostate exam result (DRE)</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Categorizes exam findings into Normal, Suspicious, or Abnormal nodular structures.
+                  The doctor records whether the prostate felt normal, suspicious, or abnormal during the exam.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <h4 className="text-lg font-bold text-foreground">Comorbidities & Age</h4>
+                <h4 className="text-lg font-bold text-foreground">Age and health history</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Considers patient age bands, hypertension, diabetes, and direct familial history of prostate carcinoma.
+                  The check also considers age group, BMI group, high blood pressure, diabetes, and close family history.
                 </p>
               </div>
             </div>
@@ -312,17 +301,17 @@ export default function Home() {
         <div className="bg-card p-8 sm:p-16 border border-border text-center space-y-8 relative overflow-hidden">
 
           <h2 className="text-3xl sm:text-5xl font-bold text-foreground max-w-2xl mx-auto leading-tight">
-            Your modern clinical decision engine.
+            A clearer way to review prostate cancer risk.
           </h2>
 
           <p className="text-base text-muted-foreground max-w-xl mx-auto">
-            We are a team of researchers, computer scientists, and clinicians dedicated to reinventing prostate cancer screening for Nigerian men.
+            Built by researchers, computer scientists, and clinicians to support prostate cancer screening for Nigerian men.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link href="/assessment">
               <button className="btn-geometric-primary text-sm font-bold flex items-center gap-2">
-                <span>Get Tested</span>
+                <span>Start Check</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </Link>
@@ -342,11 +331,11 @@ export default function Home() {
           </div>
 
           <div>
-            FUPRE Computer Science Department • Vin-Okemeri Courage (COS/909/2022)
+            FUPRE Computer Science Department - Vin-Okemeri Courage (COS/909/2022)
           </div>
 
           <div>
-            © 2026 ProsCancX. All rights reserved.
+            (c) 2026 ProsCancX. All rights reserved.
           </div>
 
         </div>

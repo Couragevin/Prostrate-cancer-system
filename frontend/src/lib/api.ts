@@ -43,22 +43,22 @@ export const api = axios.create({
 export function describeApiError(error: unknown): string {
   if (axios.isAxiosError(error)) {
     if (error.code === "ECONNABORTED") {
-      return "The risk engine took too long to respond. It may be waking up - please try again.";
+      return "The risk check took too long to respond. Please try again.";
     }
     if (error.response) {
       const detail = error.response.data?.detail;
       if (typeof detail === "string") return detail;
       if (error.response.status === 503) {
-        return "The risk model is temporarily unavailable. Please try again shortly.";
+        return "The risk model is not available right now. Please try again shortly.";
       }
       if (error.response.status === 422) {
-        return "Some clinical values were rejected by the risk engine. Please review your entries.";
+        return "Some values were not accepted. Please review your entries.";
       }
-      return `The risk engine returned an error (HTTP ${error.response.status}).`;
+      return `The risk check returned an error (HTTP ${error.response.status}).`;
     }
     // No response object at all: DNS failure, offline, or a blocked CORS preflight.
-    return "Could not reach the risk engine. Check your connection and that the API is running.";
+    return "Could not reach the risk check. Check your connection and that the API is running.";
   }
   if (error instanceof Error) return error.message;
-  return "Prediction failed. Please try again.";
+  return "The risk check failed. Please try again.";
 }

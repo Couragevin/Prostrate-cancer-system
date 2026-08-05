@@ -30,15 +30,15 @@ export default function AssessmentPage() {
         <div className="text-center space-y-3 print:hidden">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-card border border-border text-primary text-xs font-bold">
             <Ribbon className="w-4 h-4 fill-primary" />
-            <span>Clinical Diagnostic Engine</span>
+            <span>Prostate Risk Check</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
-            Prostate Cancer Risk Stratification
+            Prostate Cancer Risk Check
           </h1>
 
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed font-normal">
-            Input diagnostic biomarkers to compute a stratified risk index and extract SHAP explainable AI attribution for Nigerian men aged 40+.
+            Enter age, health history, PSA test values, and exam findings to estimate low, medium, or high prostate cancer risk for Nigerian men aged 40+.
           </p>
         </div>
 
@@ -49,9 +49,9 @@ export default function AssessmentPage() {
               <Activity className="w-7 h-7" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-foreground">Diagnostic Parameters</h2>
+              <h2 className="text-xl font-bold text-foreground">Information Needed</h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Parameters evaluated via an XGBoost classifier trained on a Nigerian-cohort dataset.
+                These details are checked by a trained model and turned into an easy-to-read risk result.
               </p>
             </div>
           </div>

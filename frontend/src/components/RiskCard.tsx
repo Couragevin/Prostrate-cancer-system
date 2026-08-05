@@ -25,42 +25,42 @@ const PRESENTATION: Record<RiskCategory, {
   recommendations: string[];
 }> = {
   Low: {
-    label: "Low Risk Profile",
+    label: "Low Risk",
     color: "text-success",
     bg: "bg-success/10",
     border: "border-success/30",
     stroke: "var(--color-success)",
     Icon: CheckCircle2,
     recommendations: [
-      "Routine screening recommended in 1-2 years.",
-      "Discuss lifestyle factors and general prostate health.",
-      "Monitor for any new urinary symptoms.",
+      "Discuss routine screening in 1-2 years with the clinician.",
+      "Keep reviewing general prostate health and lifestyle factors.",
+      "Report any new urinary symptoms.",
     ],
   },
   Intermediate: {
-    label: "Intermediate Risk Profile",
+    label: "Medium Risk",
     color: "text-warning",
     bg: "bg-warning/10",
     border: "border-warning/30",
     stroke: "var(--color-warning)",
     Icon: AlertTriangle,
     recommendations: [
-      "Consider supplementary testing (e.g., multiparametric MRI).",
-      "Schedule repeat PSA testing in 6 months.",
-      "Discuss risk profile and the option of watchful waiting.",
+      "Ask whether more tests, such as MRI, are needed.",
+      "Consider repeating the PSA test in about 6 months.",
+      "Review symptoms and risk factors with the patient.",
     ],
   },
   High: {
-    label: "High Risk Profile",
+    label: "High Risk",
     color: "text-danger",
     bg: "bg-danger/10",
     border: "border-danger/30",
     stroke: "var(--color-danger)",
     Icon: AlertOctagon,
     recommendations: [
-      "Urgent urology referral recommended.",
-      "Discuss biopsy options with patient.",
-      "Consider multiparametric MRI if not already performed.",
+      "Refer to a urologist as soon as possible.",
+      "Discuss whether MRI or biopsy may be needed.",
+      "Review the result with a specialist before treatment decisions.",
     ],
   },
 };
@@ -83,8 +83,14 @@ function categoryFromScore(score: number): RiskCategory {
 const GAUGE_ARC = "M 16 100 A 84 84 0 0 1 184 100";
 
 const MODEL_LABEL: Record<string, string> = {
-  xgboost: "XGBoost Classifier",
-  logistic_regression: "Logistic Regression (Platt-scaled)",
+  xgboost: "AI risk model",
+  logistic_regression: "Calibrated risk model",
+};
+
+const CLASS_LABEL: Record<string, string> = {
+  Low: "Low",
+  Intermediate: "Medium",
+  High: "High",
 };
 
 export function RiskCard({
@@ -110,7 +116,7 @@ export function RiskCard({
       {/* Print-only report header. Hidden on screen; anchors the paper copy
           with who/when/what, which a clinical record needs. */}
       <div className="hidden print:block border-b-2 border-black pb-3 mb-4">
-        <h1 className="text-xl font-bold">Prostate Cancer Risk Stratification Report</h1>
+        <h1 className="text-xl font-bold">Prostate Cancer Risk Check Report</h1>
         <div className="flex justify-between text-[11px] mt-2">
           <span>Generated: {timestamp.toLocaleString()}</span>
           <span>Model: {MODEL_LABEL[modelType] ?? modelType}</span>
@@ -122,25 +128,25 @@ export function RiskCard({
         <table className="hidden print:table w-full text-[11px] mb-4 border-collapse">
           <tbody>
             <tr>
-              <th className="text-left border border-black px-2 py-1 w-1/4">Age Band</th>
+              <th className="text-left border border-black px-2 py-1 w-1/4">Age Group</th>
               <td className="border border-black px-2 py-1">{inputs.age_band}</td>
-              <th className="text-left border border-black px-2 py-1 w-1/4">BMI Category</th>
+              <th className="text-left border border-black px-2 py-1 w-1/4">BMI Group</th>
               <td className="border border-black px-2 py-1">{inputs.bmi_category}</td>
             </tr>
             <tr>
-              <th className="text-left border border-black px-2 py-1">PSA Level</th>
+              <th className="text-left border border-black px-2 py-1">PSA Blood Test</th>
               <td className="border border-black px-2 py-1">{inputs.psa_level} ng/mL</td>
               <th className="text-left border border-black px-2 py-1">PSA Density</th>
               <td className="border border-black px-2 py-1">{inputs.psa_density}</td>
             </tr>
             <tr>
-              <th className="text-left border border-black px-2 py-1">DRE Finding</th>
+              <th className="text-left border border-black px-2 py-1">Prostate Exam</th>
               <td className="border border-black px-2 py-1">{inputs.dre_finding}</td>
-              <th className="text-left border border-black px-2 py-1">Family History</th>
+              <th className="text-left border border-black px-2 py-1">Close Family History</th>
               <td className="border border-black px-2 py-1">{inputs.family_history ? "Yes" : "No"}</td>
             </tr>
             <tr>
-              <th className="text-left border border-black px-2 py-1">Hypertension</th>
+              <th className="text-left border border-black px-2 py-1">High Blood Pressure</th>
               <td className="border border-black px-2 py-1">{inputs.hypertension ? "Yes" : "No"}</td>
               <th className="text-left border border-black px-2 py-1">Diabetes</th>
               <td className="border border-black px-2 py-1">{inputs.diabetes ? "Yes" : "No"}</td>
@@ -157,7 +163,7 @@ export function RiskCard({
           </div>
           <div>
             <h3 className={`text-2xl font-black ${color}`}>{label}</h3>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-0.5">Primary Assessment Result</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-0.5">Main Result</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 print:hidden">
@@ -180,7 +186,7 @@ export function RiskCard({
         {/* Metric Display Box (Circular Gauge) */}
         <div className="lg:col-span-4 bg-muted/50 p-6 rounded-[24px] border border-border text-center space-y-4 flex flex-col items-center justify-center print:break-inside-avoid">
           <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Composite Risk Index
+            Overall Risk Score
           </span>
 
           {/* Semi-circular gauge.
@@ -196,7 +202,7 @@ export function RiskCard({
             viewBox="0 0 200 122"
             className="w-full max-w-[220px] h-auto"
             role="img"
-            aria-label={`Composite risk index ${percentage} percent, ${label}`}
+            aria-label={`Overall risk score ${percentage} percent, ${label}`}
           >
             {/* Unfilled track. Uses --color-border rather than --color-muted:
                 print forces muted to white, which made the track vanish on
@@ -247,14 +253,14 @@ export function RiskCard({
               per-stratum figures, so this only needs to say what the number is
               not - the one thing neither of those conveys. */}
           <p className="text-[11px] leading-snug font-medium text-muted-foreground w-full text-center">
-            Expected severity, not a probability of diagnosis. 50% marks Intermediate.
+            Higher means the details look more concerning. This is not a diagnosis.
           </p>
 
           {classProbabilities && (
             <dl className="w-full space-y-1.5 pt-3 border-t border-border">
               {(["Low", "Intermediate", "High"] as const).map((key) => (
                 <div key={key} className="flex items-center justify-between text-[11px]">
-                  <dt className="font-semibold text-muted-foreground">{key}</dt>
+                  <dt className="font-semibold text-muted-foreground">{CLASS_LABEL[key] ?? key}</dt>
                   <dd className="font-bold text-foreground tabular-nums">
                     {((classProbabilities[key] ?? 0) * 100).toFixed(1)}%
                   </dd>
@@ -264,12 +270,12 @@ export function RiskCard({
           )}
         </div>
 
-        {/* Narrative & Recommendations */}
+        {/* Explanation & Next Steps */}
         <div className="lg:col-span-8 space-y-6">
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
               <FileText className="w-4 h-4 print:hidden" />
-              <span>Automated Clinical Narrative</span>
+              <span>Model Explanation</span>
             </div>
             <div className="p-5 rounded-2xl bg-muted/30 border border-border print:p-2">
               <p className="text-foreground text-sm leading-relaxed font-medium whitespace-pre-line">
@@ -281,7 +287,7 @@ export function RiskCard({
           <div className="space-y-3 print:break-inside-avoid">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
               <ClipboardList className="w-4 h-4 print:hidden" />
-              <span>Clinical Recommendations</span>
+              <span>Suggested Next Steps</span>
             </div>
             <ul className="space-y-2">
               {recommendations.map((rec) => (
@@ -303,11 +309,11 @@ export function RiskCard({
       <div className="hidden print:block border-t border-black pt-2 mt-4 text-[9px] leading-snug">
         <p>
           <strong>Decision support only.</strong> This report is generated by a machine-learning
-          model and does not constitute a diagnosis. Clinical correlation and specialist
-          review are required before any diagnostic or treatment decision.
+          model and is not a diagnosis. A clinician or specialist should review the result
+          before any diagnosis or treatment decision.
         </p>
         <p className="mt-1">
-          Generated {timestamp.toLocaleString()} &middot; Prostate Cancer Risk Stratification System
+          Generated {timestamp.toLocaleString()} - Prostate Cancer Risk Check
         </p>
       </div>
 

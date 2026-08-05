@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { ShieldCheck, Activity, Dna, Cpu, FileCheck } from "lucide-react";
 
 const loaderSteps = [
-  { text: "Initializing Secure Connection...", icon: ShieldCheck },
-  { text: "Analyzing Clinical Biomarkers...", icon: Activity },
-  { text: "Running XGBoost Model...", icon: Cpu },
-  { text: "Computing SHAP Attributions...", icon: Dna },
-  { text: "Finalizing Risk Stratification...", icon: FileCheck },
+  { text: "Starting secure check...", icon: ShieldCheck },
+  { text: "Reviewing the test fields...", icon: Activity },
+  { text: "Running the risk model...", icon: Cpu },
+  { text: "Finding what affected the result...", icon: Dna },
+  { text: "Preparing the risk result...", icon: FileCheck },
 ];
 
 export function AnimatedLoader() {
@@ -61,7 +61,7 @@ export function AnimatedLoader() {
           {loaderSteps[currentStep].text}
         </motion.p>
         <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
-          Processing Step {currentStep + 1} of {loaderSteps.length}
+          Step {currentStep + 1} of {loaderSteps.length}
         </p>
       </div>
     </div>

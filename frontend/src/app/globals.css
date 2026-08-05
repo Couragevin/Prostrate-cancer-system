@@ -176,7 +176,7 @@
 
 /* Pill button variants used throughout the assessment wizard. These were
    referenced by every wizard button but never defined, so Continue / Back /
-   Run Prediction rendered as bare browser-default buttons. */
+   Check Risk rendered as bare browser-default buttons. */
 .btn-pill-primary,
 .btn-pill-secondary,
 .btn-pill-outline {

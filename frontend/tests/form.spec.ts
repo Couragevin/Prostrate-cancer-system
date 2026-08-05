@@ -21,44 +21,44 @@ const MOCK_RESULT = {
   shap_basis: 'xgboost',
 };
 
-/** Walks the wizard up to the Run Prediction button without clicking it. */
+/** Walks the wizard up to the Check Risk button without clicking it. */
 async function fillWizard(page: Page) {
   await page.goto('/assessment');
 
-  await expect(page.getByRole('heading', { name: 'Patient Information' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Patient Details' })).toBeVisible();
   await page.getByRole('button', { name: 'Continue' }).click();
 
-  await expect(page.getByRole('heading', { name: 'Medical History' })).toBeVisible();
-  await page.getByText('Direct Family History').click();
+  await expect(page.getByRole('heading', { name: 'Health History' })).toBeVisible();
+  await page.getByText('Close Family History').click();
   await page.getByRole('button', { name: 'Continue' }).click();
 
-  await expect(page.getByRole('heading', { name: 'Laboratory Results' })).toBeVisible();
-  await page.getByLabel('Total Serum PSA (ng/mL)').fill('5.2');
+  await expect(page.getByRole('heading', { name: 'Test Results' })).toBeVisible();
+  await page.getByLabel('PSA Blood Test Result (ng/mL)').fill('5.2');
   await page.getByLabel('PSA Density').fill('0.15');
   await page.getByRole('combobox').click();
-  await page.getByRole('option', { name: 'Normal (Smooth, non-tender)' }).click();
+  await page.getByRole('option', { name: 'Normal (smooth)' }).click();
 }
 
-test.describe('Assessment wizard', () => {
+test.describe('Risk check wizard', () => {
   test('renders results after a successful prediction', async ({ page }) => {
     await page.route(PREDICT_ROUTE, (route) => route.fulfill({ json: MOCK_RESULT }));
 
     await fillWizard(page);
-    await page.getByRole('button', { name: 'Run Prediction' }).click();
+    await page.getByRole('button', { name: 'Check Risk' }).click();
 
-    await expect(page.getByRole('heading', { name: 'Analysis Complete' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Risk Check Complete' })).toBeVisible({ timeout: 15000 });
     await expect(page.getByText('Mocked prediction narrative for the assessed patient.')).toBeVisible();
 
     // Category comes from the backend, not a client-side threshold.
-    await expect(page.getByText('Intermediate Risk Profile')).toBeVisible();
+    await expect(page.getByText('Medium Risk')).toBeVisible();
     await expect(page.getByText('50.0%')).toBeVisible();
 
-    // Explainability panel rendered from the SHAP payload.
-    await expect(page.getByText('AI Explainability (SHAP)')).toBeVisible();
+    // Explanation panel rendered from the SHAP payload.
+    await expect(page.getByText('What Affected This Result')).toBeVisible();
     await expect(page.getByRole('button', { name: /Print Report/ })).toBeVisible();
   });
 
-  test('sends every collected field, including comorbidities', async ({ page }) => {
+  test('sends every collected field, including health history', async ({ page }) => {
     let body: Record<string, unknown> | undefined;
     await page.route(PREDICT_ROUTE, async (route) => {
       body = route.request().postDataJSON();
@@ -67,16 +67,16 @@ test.describe('Assessment wizard', () => {
 
     await page.goto('/assessment');
     await page.getByRole('button', { name: 'Continue' }).click();
-    await page.getByText('Direct Family History').click();
-    await page.getByText('Hypertension').click();
+    await page.getByText('Close Family History').click();
+    await page.getByText('High Blood Pressure').click();
     await page.getByRole('button', { name: 'Continue' }).click();
-    await page.getByLabel('Total Serum PSA (ng/mL)').fill('9.1');
+    await page.getByLabel('PSA Blood Test Result (ng/mL)').fill('9.1');
     await page.getByLabel('PSA Density').fill('0.22');
     await page.getByRole('combobox').click();
-    await page.getByRole('option', { name: 'Abnormal (Hard nodules)' }).click();
-    await page.getByRole('button', { name: 'Run Prediction' }).click();
+    await page.getByRole('option', { name: 'Abnormal (hard lump or nodule)' }).click();
+    await page.getByRole('button', { name: 'Check Risk' }).click();
 
-    await expect(page.getByRole('heading', { name: 'Analysis Complete' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Risk Check Complete' })).toBeVisible({ timeout: 15000 });
 
     expect(body).toMatchObject({
       age_band: '50-59',
@@ -92,22 +92,22 @@ test.describe('Assessment wizard', () => {
 
   test('stays on the results step and offers retry when the API fails', async ({ page }) => {
     // Regression test: a failed request used to send the user back to the
-    // Laboratory Results form, which read as "the submit button did nothing".
+    // Test Results form, which read as "the submit button did nothing".
     await page.route(PREDICT_ROUTE, (route) => route.abort('failed'));
 
     await fillWizard(page);
-    await page.getByRole('button', { name: 'Run Prediction' }).click();
+    await page.getByRole('button', { name: 'Check Risk' }).click();
 
     const errorPanel = page.getByTestId('prediction-error');
     await expect(errorPanel).toBeVisible({ timeout: 15000 });
-    await expect(page.getByText('Analysis Could Not Complete')).toBeVisible();
+    await expect(page.getByText('Risk Check Could Not Finish')).toBeVisible();
 
     // Must NOT have fallen back to the input form.
-    await expect(page.getByRole('heading', { name: 'Laboratory Results' })).toBeHidden();
-    await expect(page.getByRole('button', { name: 'Run Prediction' })).toBeHidden();
+    await expect(page.getByRole('heading', { name: 'Test Results' })).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Check Risk' })).toBeHidden();
 
-    await expect(page.getByRole('button', { name: /Retry Analysis/ })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Edit Inputs/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Try Again/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Edit Test Results/ })).toBeVisible();
   });
 
   test('retry succeeds without re-entering data', async ({ page }) => {
@@ -119,12 +119,12 @@ test.describe('Assessment wizard', () => {
     });
 
     await fillWizard(page);
-    await page.getByRole('button', { name: 'Run Prediction' }).click();
+    await page.getByRole('button', { name: 'Check Risk' }).click();
 
     await expect(page.getByTestId('prediction-error')).toBeVisible({ timeout: 15000 });
-    await page.getByRole('button', { name: /Retry Analysis/ }).click();
+    await page.getByRole('button', { name: /Try Again/ }).click();
 
-    await expect(page.getByRole('heading', { name: 'Analysis Complete' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Risk Check Complete' })).toBeVisible({ timeout: 15000 });
     await expect(page.getByText('Mocked prediction narrative for the assessed patient.')).toBeVisible();
     expect(attempts).toBe(2);
   });
@@ -135,7 +135,7 @@ test.describe('Assessment wizard', () => {
     );
 
     await fillWizard(page);
-    await page.getByRole('button', { name: 'Run Prediction' }).click();
+    await page.getByRole('button', { name: 'Check Risk' }).click();
 
     await expect(page.getByTestId('prediction-error')).toBeVisible({ timeout: 15000 });
     await expect(
@@ -147,8 +147,8 @@ test.describe('Assessment wizard', () => {
     await page.route(PREDICT_ROUTE, (route) => route.fulfill({ json: MOCK_RESULT }));
 
     await fillWizard(page);
-    await page.getByRole('button', { name: 'Run Prediction' }).click();
-    await expect(page.getByRole('heading', { name: 'Analysis Complete' })).toBeVisible({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Check Risk' }).click();
+    await expect(page.getByRole('heading', { name: 'Risk Check Complete' })).toBeVisible({ timeout: 15000 });
 
     const gauge = page.locator('svg[role="img"]').first();
     await expect(gauge).toBeVisible();
@@ -194,8 +194,8 @@ test.describe('Assessment wizard', () => {
     });
 
     await fillWizard(page);
-    await page.getByRole('button', { name: 'Run Prediction' }).click();
-    await expect(page.getByRole('heading', { name: 'Analysis Complete' })).toBeVisible({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Check Risk' }).click();
+    await expect(page.getByRole('heading', { name: 'Risk Check Complete' })).toBeVisible({ timeout: 15000 });
 
     expect(requestedUrl).toContain('/api/v1/predict/');
     // No doubled slash anywhere after the scheme.
@@ -206,32 +206,32 @@ test.describe('Assessment wizard', () => {
     await page.goto('/assessment');
     await page.getByRole('button', { name: 'Continue' }).click();
     await page.getByRole('button', { name: 'Continue' }).click();
-    await expect(page.getByRole('heading', { name: 'Laboratory Results' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Test Results' })).toBeVisible();
 
     // PSA above the accepted range, and DRE never selected.
-    await page.getByLabel('Total Serum PSA (ng/mL)').fill('2000');
-    await page.getByRole('button', { name: 'Run Prediction' }).click();
+    await page.getByLabel('PSA Blood Test Result (ng/mL)').fill('2000');
+    await page.getByRole('button', { name: 'Check Risk' }).click();
 
     await expect(
-      page.getByText('Please fix the validation errors before proceeding.')
+      page.getByText('Please check the highlighted fields before continuing.')
     ).toBeVisible();
     await expect(
-      page.getByText('PSA level is unusually high, please verify (max 1000)')
+      page.getByText('This PSA value is very high. Please check it (max 1000)')
     ).toBeVisible();
 
     // Stays put; no navigation to the results step.
-    await expect(page.getByRole('heading', { name: 'Laboratory Results' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Test Results' })).toBeVisible();
   });
 
-  test('New Assessment returns to a clean step 1', async ({ page }) => {
+  test('New Check returns to a clean step 1', async ({ page }) => {
     await page.route(PREDICT_ROUTE, (route) => route.fulfill({ json: MOCK_RESULT }));
 
     await fillWizard(page);
-    await page.getByRole('button', { name: 'Run Prediction' }).click();
-    await expect(page.getByRole('heading', { name: 'Analysis Complete' })).toBeVisible({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Check Risk' }).click();
+    await expect(page.getByRole('heading', { name: 'Risk Check Complete' })).toBeVisible({ timeout: 15000 });
 
-    await page.getByRole('button', { name: 'New Assessment' }).click();
-    await expect(page.getByRole('heading', { name: 'Patient Information' })).toBeVisible();
+    await page.getByRole('button', { name: 'New Check' }).click();
+    await expect(page.getByRole('heading', { name: 'Patient Details' })).toBeVisible();
     await expect(page.getByText('Step 1 of 3')).toBeVisible();
   });
 
@@ -239,19 +239,19 @@ test.describe('Assessment wizard', () => {
     await page.route(PREDICT_ROUTE, (route) => route.fulfill({ json: MOCK_RESULT }));
 
     await fillWizard(page);
-    await page.getByRole('button', { name: 'Run Prediction' }).click();
-    await expect(page.getByRole('heading', { name: 'Analysis Complete' })).toBeVisible({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Check Risk' }).click();
+    await expect(page.getByRole('heading', { name: 'Risk Check Complete' })).toBeVisible({ timeout: 15000 });
 
     await page.emulateMedia({ media: 'print' });
 
     // Report content survives.
-    await expect(page.getByText('Prostate Cancer Risk Stratification Report')).toBeVisible();
+    await expect(page.getByText('Prostate Cancer Risk Check Report')).toBeVisible();
     await expect(page.getByText('Mocked prediction narrative for the assessed patient.')).toBeVisible();
     await expect(page.getByText(/Decision support only/)).toBeVisible();
 
     // App chrome does not.
     await expect(page.getByRole('button', { name: /Print Report/ })).toBeHidden();
-    await expect(page.getByRole('button', { name: 'New Assessment' })).toBeHidden();
+    await expect(page.getByRole('button', { name: 'New Check' })).toBeHidden();
     await expect(page.locator('aside')).toBeHidden();
   });
 });

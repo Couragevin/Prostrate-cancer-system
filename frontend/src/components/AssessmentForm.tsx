@@ -33,10 +33,10 @@ import {
 } from "lucide-react";
 
 const STEPS = [
-  { id: "patient_info", title: "Patient Information" },
-  { id: "medical_history", title: "Medical History" },
-  { id: "lab_results", title: "Laboratory Results" },
-  { id: "prediction", title: "Prediction Results" }
+  { id: "patient_info", title: "Patient Details" },
+  { id: "medical_history", title: "Health History" },
+  { id: "lab_results", title: "Test Results" },
+  { id: "prediction", title: "Risk Result" }
 ];
 
 /** Minimum time the loader stays visible, so a fast response doesn't flash. */
@@ -99,7 +99,7 @@ export function AssessmentForm() {
     if (isStepValid) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      toast.error("Please fix the validation errors before proceeding.");
+      toast.error("Please check the highlighted fields before continuing.");
     }
   };
 
@@ -145,7 +145,7 @@ export function AssessmentForm() {
   const onInvalid = () => {
     // handleSubmit swallows invalid submissions silently by default, so the
     // button appeared inert when a required field was missing.
-    toast.error("Please fix the validation errors before proceeding.");
+    toast.error("Please check the highlighted fields before continuing.");
   };
 
   const retryPrediction = () => runPrediction(getValues());
@@ -187,8 +187,8 @@ export function AssessmentForm() {
               className="space-y-8"
             >
               <div className="space-y-2 border-b border-border pb-4">
-                <h3 className="text-2xl font-bold text-foreground">Patient Information</h3>
-                <p className="text-sm text-muted-foreground">Enter basic demographic factors.</p>
+                <h3 className="text-2xl font-bold text-foreground">Patient Details</h3>
+                <p className="text-sm text-muted-foreground">Enter the patient&apos;s age and body size.</p>
               </div>
 
               <div className="grid grid-cols-1 gap-8">
@@ -197,9 +197,9 @@ export function AssessmentForm() {
                   <div className="flex justify-between items-center">
                     <Label className="flex items-center gap-2 text-sm font-semibold text-foreground">
                       <Calendar className="w-4 h-4 text-primary" />
-                      <span>Patient Age</span>
+                      <span>Age</span>
                     </Label>
-                    <span className="text-xl font-bold text-primary">{ageContinuous} Years</span>
+                    <span className="text-xl font-bold text-primary">{ageContinuous} years</span>
                   </div>
                   <Slider 
                     value={[ageContinuous]} 
@@ -260,8 +260,8 @@ export function AssessmentForm() {
               className="space-y-8"
             >
               <div className="space-y-2 border-b border-border pb-4">
-                <h3 className="text-2xl font-bold text-foreground">Medical History</h3>
-                <p className="text-sm text-muted-foreground">Select all known comorbidities and family risk factors.</p>
+                <h3 className="text-2xl font-bold text-foreground">Health History</h3>
+                <p className="text-sm text-muted-foreground">Tick any health conditions or family history that apply.</p>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
@@ -272,8 +272,8 @@ export function AssessmentForm() {
                       <Users className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-foreground">Direct Family History</h4>
-                      <p className="text-xs text-muted-foreground">Father or brother diagnosed with prostate cancer</p>
+                      <h4 className="text-sm font-bold text-foreground">Close Family History</h4>
+                      <p className="text-xs text-muted-foreground">Father or brother has had prostate cancer</p>
                     </div>
                   </div>
                   <input type="checkbox" {...register("family_history")} className="w-5 h-5 rounded text-primary accent-primary" />
@@ -285,8 +285,8 @@ export function AssessmentForm() {
                       <HeartPulse className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-foreground">Hypertension</h4>
-                      <p className="text-xs text-muted-foreground">Diagnosed high blood pressure</p>
+                      <h4 className="text-sm font-bold text-foreground">High Blood Pressure</h4>
+                      <p className="text-xs text-muted-foreground">A doctor has diagnosed high blood pressure</p>
                     </div>
                   </div>
                   <input type="checkbox" {...register("hypertension")} className="w-5 h-5 rounded text-primary accent-primary" />
@@ -298,8 +298,8 @@ export function AssessmentForm() {
                       <Droplet className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-foreground">Diabetes Mellitus</h4>
-                      <p className="text-xs text-muted-foreground">Diagnosed type 1 or type 2 diabetes</p>
+                      <h4 className="text-sm font-bold text-foreground">Diabetes</h4>
+                      <p className="text-xs text-muted-foreground">A doctor has diagnosed type 1 or type 2 diabetes</p>
                     </div>
                   </div>
                   <input type="checkbox" {...register("diabetes")} className="w-5 h-5 rounded text-primary accent-primary" />
@@ -331,8 +331,8 @@ export function AssessmentForm() {
               className="space-y-8"
             >
               <div className="space-y-2 border-b border-border pb-4">
-                <h3 className="text-2xl font-bold text-foreground">Laboratory Results</h3>
-                <p className="text-sm text-muted-foreground">Input clinical biomarkers for diagnostic processing.</p>
+                <h3 className="text-2xl font-bold text-foreground">Test Results</h3>
+                <p className="text-sm text-muted-foreground">Enter the PSA test numbers and prostate exam finding.</p>
               </div>
 
               <div className="grid grid-cols-1 gap-6">
@@ -341,15 +341,19 @@ export function AssessmentForm() {
                 <div className="space-y-3">
                   <Label htmlFor="psa_level" className="flex items-center gap-2 text-sm font-semibold text-foreground">
                     <TestTube className="w-4 h-4 text-primary" />
-                    <span>Total Serum PSA (ng/mL)</span>
+                    <span>PSA Blood Test Result (ng/mL)</span>
                   </Label>
+                  <p id="psa-level-help" className="text-xs text-muted-foreground">
+                    The total PSA number shown on the blood test report.
+                  </p>
                   <Input
                     id="psa_level"
                     type="number"
                     step="0.1"
+                    aria-describedby="psa-level-help"
                     className="h-14 bg-muted border-border text-lg font-bold text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-primary px-4"
                     {...register("psa_level", { valueAsNumber: true })}
-                    placeholder="e.g. 4.5"
+                    placeholder="Example: 4.5"
                   />
                   {errors.psa_level && <p className="text-xs font-semibold text-danger">{errors.psa_level.message}</p>}
                 </div>
@@ -360,13 +364,17 @@ export function AssessmentForm() {
                     <Microscope className="w-4 h-4 text-primary" />
                     <span>PSA Density</span>
                   </Label>
+                  <p id="psa-density-help" className="text-xs text-muted-foreground">
+                    A PSA value adjusted for prostate size. Use the value listed as PSA density on the report.
+                  </p>
                   <Input
                     id="psa_density"
                     type="number"
                     step="0.01"
+                    aria-describedby="psa-density-help"
                     className="h-14 bg-muted border-border text-lg font-bold text-foreground placeholder:text-muted-foreground rounded-xl focus:ring-primary px-4"
                     {...register("psa_density", { valueAsNumber: true })}
-                    placeholder="e.g. 0.15"
+                    placeholder="Example: 0.15"
                   />
                   {errors.psa_density && <p className="text-xs font-semibold text-danger">{errors.psa_density.message}</p>}
                 </div>
@@ -375,8 +383,11 @@ export function AssessmentForm() {
                 <div className="space-y-3">
                   <Label htmlFor="dre_finding" className="flex items-center gap-2 text-sm font-semibold text-foreground">
                     <Stethoscope className="w-4 h-4 text-primary" />
-                    <span>Digital Rectal Exam (DRE)</span>
+                    <span>Prostate Exam Result (DRE)</span>
                   </Label>
+                  <p id="dre-finding-help" className="text-xs text-muted-foreground">
+                    DRE means digital rectal exam. Choose what the doctor found during the exam.
+                  </p>
                   
                   <Controller
                     name="dre_finding"
@@ -386,13 +397,13 @@ export function AssessmentForm() {
                       // render. Base UI treats `undefined` as uncontrolled and
                       // warns when the field later receives a value.
                       <Select onValueChange={field.onChange} value={field.value ?? null}>
-                        <SelectTrigger className="h-14 bg-muted border-border text-foreground text-sm rounded-xl focus:ring-primary">
-                          <SelectValue placeholder="Select Exam Finding" />
+                        <SelectTrigger aria-describedby="dre-finding-help" className="h-14 bg-muted border-border text-foreground text-sm rounded-xl focus:ring-primary">
+                          <SelectValue placeholder="Choose the exam result" />
                         </SelectTrigger>
                         <SelectContent className="bg-muted border-border text-foreground">
-                          <SelectItem value="Normal">Normal (Smooth, non-tender)</SelectItem>
-                          <SelectItem value="Suspicious">Suspicious (Induration)</SelectItem>
-                          <SelectItem value="Abnormal">Abnormal (Hard nodules)</SelectItem>
+                          <SelectItem value="Normal">Normal (smooth)</SelectItem>
+                          <SelectItem value="Suspicious">Suspicious (firm area)</SelectItem>
+                          <SelectItem value="Abnormal">Abnormal (hard lump or nodule)</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -405,7 +416,7 @@ export function AssessmentForm() {
               <div className="bg-success/5 border border-success/20 rounded-xl p-4 flex gap-3 items-start">
                 <Info className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  By submitting this form, data is processed entirely in memory via secure stateless APIs. No personally identifiable information (PII) is stored or logged.
+                  Your entries are used only to run this risk check. The app does not ask for or store names, addresses, or other personal details.
                 </p>
               </div>
 
@@ -415,7 +426,7 @@ export function AssessmentForm() {
                   <span>Back</span>
                 </button>
                 <button type="button" onClick={handleSubmit(runPrediction, onInvalid)} className="btn-pill-primary text-sm flex items-center gap-2 shadow-xl shadow-primary/20">
-                  <span>Run Prediction</span>
+                  <span>Check Risk</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -442,17 +453,17 @@ export function AssessmentForm() {
                     <AlertOctagon className="w-8 h-8" />
                   </div>
                   <div className="space-y-2 max-w-md">
-                    <h3 className="text-2xl font-bold text-foreground">Analysis Could Not Complete</h3>
+                    <h3 className="text-2xl font-bold text-foreground">Risk Check Could Not Finish</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{submitError}</p>
                   </div>
                   <div className="flex flex-wrap items-center justify-center gap-3">
                     <button onClick={retryPrediction} className="btn-pill-primary text-sm flex items-center gap-2">
                       <RotateCw className="w-4 h-4" />
-                      <span>Retry Analysis</span>
+                      <span>Try Again</span>
                     </button>
                     <button onClick={() => setCurrentStep(2)} className="btn-pill-secondary text-sm flex items-center gap-2">
                       <ChevronLeft className="w-4 h-4" />
-                      <span>Edit Inputs</span>
+                      <span>Edit Test Results</span>
                     </button>
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -464,12 +475,12 @@ export function AssessmentForm() {
 
                   {/* Results Header Action - hidden when printing */}
                   <div className="flex items-center justify-between border-b border-border pb-4 print:hidden">
-                    <h3 className="text-2xl font-bold text-foreground">Analysis Complete</h3>
+                    <h3 className="text-2xl font-bold text-foreground">Risk Check Complete</h3>
                     <button
                       onClick={startNewAssessment}
                       className="btn-pill-outline text-xs py-1.5 px-4"
                     >
-                      New Assessment
+                      New Check
                     </button>
                   </div>
 
