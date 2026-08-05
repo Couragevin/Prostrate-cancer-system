@@ -143,6 +143,45 @@ test.describe('Assessment wizard', () => {
     ).toBeVisible();
   });
 
+  test('risk gauge scales with its column and encodes the value', async ({ page }) => {
+    await page.route(PREDICT_ROUTE, (route) => route.fulfill({ json: MOCK_RESULT }));
+
+    await fillWizard(page);
+    await page.getByRole('button', { name: 'Run Prediction' }).click();
+    await expect(page.getByRole('heading', { name: 'Analysis Complete' })).toBeVisible({ timeout: 15000 });
+
+    const gauge = page.locator('svg[role="img"]').first();
+    await expect(gauge).toBeVisible();
+
+    const geometry = await gauge.evaluate((svg) => {
+      const paths = svg.querySelectorAll('path');
+      const texts = Array.from(svg.querySelectorAll('text')).map((t) => t.textContent);
+      return {
+        // A viewBox is what makes the arc scale with the container rather than
+        // sitting at a fixed pixel size while the card resizes around it.
+        viewBox: svg.getAttribute('viewBox'),
+        dashOffset: paths[1].getAttribute('stroke-dashoffset'),
+        pathLength: paths[1].getAttribute('pathLength'),
+        trackStroke: paths[0].getAttribute('stroke'),
+        texts,
+        svgWidth: svg.getBoundingClientRect().width,
+        parentWidth: (svg.parentElement as HTMLElement).getBoundingClientRect().width,
+      };
+    });
+
+    expect(geometry.viewBox).toBeTruthy();
+    // pathLength normalisation: offset is simply 100 - percentage.
+    expect(geometry.pathLength).toBe('100');
+    expect(Number(geometry.dashOffset)).toBeCloseTo(100 - MOCK_RESULT.xgboost_probability * 100, 1);
+    // Track must not use --color-muted, which print forces to white.
+    expect(geometry.trackStroke).toBe('var(--color-border)');
+    // Scale labels so the figure is not read as a probability of disease.
+    expect(geometry.texts).toContain('Low');
+    expect(geometry.texts).toContain('High');
+    // Never wider than the column it sits in.
+    expect(geometry.svgWidth).toBeLessThanOrEqual(geometry.parentWidth + 1);
+  });
+
   test('requests a single-slash predict path', async ({ page }) => {
     // Regression test: a trailing slash on NEXT_PUBLIC_API_URL produced
     // "<host>//api/v1/predict/", which FastAPI answers with 404 "Not Found".

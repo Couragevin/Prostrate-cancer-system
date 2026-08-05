@@ -75,6 +75,13 @@ function categoryFromScore(score: number): RiskCategory {
   return "Low";
 }
 
+/**
+ * Semicircle from (16,100) to (184,100) about centre (100,100), radius 84.
+ * With a 16px stroke and round caps the drawing extends 8px past each end, so
+ * the marks occupy x 8..192 and y 8..108 inside the 200x122 viewBox.
+ */
+const GAUGE_ARC = "M 16 100 A 84 84 0 0 1 184 100";
+
 const MODEL_LABEL: Record<string, string> = {
   xgboost: "XGBoost Classifier",
   logistic_regression: "Logistic Regression (Platt-scaled)",
@@ -94,11 +101,6 @@ export function RiskCard({
 
   const numericPercentage = Math.min(100, Math.max(0, riskScore * 100));
   const percentage = numericPercentage.toFixed(1);
-
-  // Semi-circular gauge geometry.
-  const radius = 60;
-  const circumference = radius * Math.PI;
-  const dashoffset = circumference - (numericPercentage / 100) * circumference;
 
   const timestamp = completedAt ?? new Date();
 
@@ -181,30 +183,71 @@ export function RiskCard({
             Composite Risk Index
           </span>
 
-          <div className="relative w-48 h-24 overflow-hidden flex items-end justify-center pt-4">
-             <svg className="absolute top-0 w-40 h-40 transform -rotate-180" aria-hidden="true">
-               <circle cx="80" cy="80" r={radius} className="stroke-muted fill-none" strokeWidth="16" />
-               <circle
-                 cx="80"
-                 cy="80"
-                 r={radius}
-                 className="fill-none transition-all duration-1000 ease-out"
-                 stroke={stroke}
-                 strokeWidth="16"
-                 strokeDasharray={circumference}
-                 strokeDashoffset={dashoffset}
-                 strokeLinecap="round"
-               />
-             </svg>
-             <div className="absolute bottom-0 flex flex-col items-center pb-2">
-               <span className={`text-4xl font-black ${color}`}>
-                 {percentage}%
-               </span>
-             </div>
-          </div>
+          {/* Semi-circular gauge.
+              Drawn in a viewBox so the arc, the value and the scale labels all
+              scale together with the column instead of sitting at a fixed 160px
+              while the card around them resizes. The previous version clipped a
+              full 160px circle inside a 192x96 box with overflow-hidden, which
+              left the arc unanchored horizontally and let the value text collide
+              with the arc's rounded end caps.
+              `pathLength={100}` normalises the arc so the dash offset is just
+              `100 - percentage`, with no radius/circumference arithmetic. */}
+          <svg
+            viewBox="0 0 200 122"
+            className="w-full max-w-[220px] h-auto"
+            role="img"
+            aria-label={`Composite risk index ${percentage} percent, ${label}`}
+          >
+            {/* Unfilled track. Uses --color-border rather than --color-muted:
+                print forces muted to white, which made the track vanish on
+                paper and took the sense of scale with it. */}
+            <path
+              d={GAUGE_ARC}
+              fill="none"
+              stroke="var(--color-border)"
+              strokeWidth="16"
+              strokeLinecap="round"
+            />
+            <path
+              d={GAUGE_ARC}
+              fill="none"
+              stroke={stroke}
+              strokeWidth="16"
+              strokeLinecap="round"
+              pathLength={100}
+              strokeDasharray="100"
+              strokeDashoffset={100 - numericPercentage}
+              className="transition-[stroke-dashoffset] duration-1000 ease-out"
+            />
 
-          <p className="text-[10px] font-semibold text-muted-foreground w-full text-center px-4">
-            Expected-severity index across Low / Intermediate / High. Not the probability of a diagnosis.
+            {/* Sized to clear the arc's inner opening at the widest value
+                ("100.0%") rather than filling it edge to edge. */}
+            <text
+              x="100"
+              y="86"
+              textAnchor="middle"
+              className={`${color} fill-current`}
+              fontSize="29"
+              fontWeight="800"
+            >
+              {percentage}%
+            </text>
+
+            {/* Endpoint labels state what the scale means, so the number is not
+                mistaken for a probability of disease. */}
+            <text x="12" y="118" textAnchor="start" className="fill-current text-muted-foreground" fontSize="11" fontWeight="600">
+              Low
+            </text>
+            <text x="188" y="118" textAnchor="end" className="fill-current text-muted-foreground" fontSize="11" fontWeight="600">
+              High
+            </text>
+          </svg>
+
+          {/* The endpoint labels carry the scale and the table below carries the
+              per-stratum figures, so this only needs to say what the number is
+              not - the one thing neither of those conveys. */}
+          <p className="text-[11px] leading-snug font-medium text-muted-foreground w-full text-center">
+            Expected severity, not a probability of diagnosis. 50% marks Intermediate.
           </p>
 
           {classProbabilities && (
