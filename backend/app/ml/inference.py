@@ -1,119 +1,162 @@
-import pandas as pd
-import numpy as np
-from typing import Dict, Any
-from huggingface_hub import hf_hub_download
-import joblib
-import shap
+import json
+import threading
+from pathlib import Path
+from typing import Dict, List, Optional
 
-from app.models.schemas import ClinicalInput, PredictionResponse, XGBoostResponse, LogisticRegressionResponse
+import joblib
+import numpy as np
+import xgboost as xgb
+
+from app.ml.features import FEATURE_ORDER, RISK_CLASSES, build_frame
+from app.models.schemas import (
+    ClinicalInput,
+    LogisticRegressionResponse,
+    PredictionResponse,
+    XGBoostResponse,
+)
+
+ARTIFACT_DIR = Path(__file__).parent / "artifacts"
+
+
+class ModelsUnavailableError(RuntimeError):
+    """Raised when a prediction is requested but the artifacts never loaded."""
+
 
 class ModelInference:
     """
-    Handles the dual-model approach: 
-    1. Primary XGBoost classifier
-    2. Logistic regression model adjusted via Platt scaling for the Nigerian demographic
-    3. SHAP TreeExplainer for Explainable AI (XAI)
+    Dual-model risk stratification:
+      1. Primary multiclass XGBoost classifier
+      2. Logistic regression calibrated via Platt scaling (sigmoid)
+      3. TreeSHAP feature attribution for Explainable AI (XAI)
+
+    TreeSHAP is computed through XGBoost's native `pred_contribs` rather than the
+    standalone `shap` package: shap 0.46 cannot parse an XGBoost 3.x multiclass
+    model dump (it chokes on the vector-valued base_score). `pred_contribs` is
+    the same exact TreeSHAP algorithm implemented inside XGBoost, and it is
+    additively exact - contributions plus bias reconstruct the raw class margin.
+
+    Artifacts are produced by `python train_models.py` and loaded once at
+    application start-up. There is deliberately no silent numeric fallback: a
+    clinical decision support tool that invents a plausible-looking risk score
+    when its model is missing is worse than one that reports an outage.
     """
-    def __init__(self):
-        self.repo_id = "Couragevin/prostate-cancer-risk-models"
-        self.xgb_filename = "xgboost_model.joblib"
-        self.lr_filename = "logistic_regression_calibrated.joblib"
+
+    def __init__(self) -> None:
         self.xgb_model = None
         self.lr_model = None
         self.xgb_explainer = None
         self.lr_explainer = None
+        self.metadata: Dict = {}
         self.models_loaded = False
-        
-    def load_models(self):
-        """Loads models from Hugging Face."""
-        try:
-            xgb_path = hf_hub_download(repo_id=self.repo_id, filename=self.xgb_filename)
-            self.xgb_model = joblib.load(xgb_path)
-            
-            lr_path = hf_hub_download(repo_id=self.repo_id, filename=self.lr_filename)
-            self.lr_model = joblib.load(lr_path)
-            
-            # Initialize explainers if possible
-            if self.xgb_model:
-                self.xgb_explainer = shap.TreeExplainer(self.xgb_model)
-            if self.lr_model:
-                self.lr_explainer = shap.LinearExplainer(self.lr_model, shap.maskers.Independent(np.zeros((1, 5)))) # Placeholder masker
-                
-            self.models_loaded = True
-        except Exception as e:
-            print(f"Model loading from HF Hub failed (using simulated fallback): {e}")
-            self.models_loaded = False
+        self.load_error: Optional[str] = None
+        self._lock = threading.Lock()
 
-    def predict_and_explain(self, features: ClinicalInput, use_logistic: bool = False) -> PredictionResponse:
+    def load_models(self) -> bool:
+        """Load artifacts from disk. Returns True on success."""
+        with self._lock:
+            try:
+                self.xgb_model = joblib.load(ARTIFACT_DIR / "xgboost_model.joblib")
+                self.lr_model = joblib.load(ARTIFACT_DIR / "logistic_regression_calibrated.joblib")
+
+                metadata_path = ARTIFACT_DIR / "metadata.json"
+                if metadata_path.exists():
+                    self.metadata = json.loads(metadata_path.read_text())
+
+                trained_order = self.metadata.get("feature_order")
+                if trained_order and list(trained_order) != list(FEATURE_ORDER):
+                    raise ValueError(
+                        "Feature order in artifacts does not match app.ml.features."
+                        f" Artifacts: {trained_order}. Code: {FEATURE_ORDER}."
+                        " Re-run train_models.py."
+                    )
+
+                # Booster handle used for native TreeSHAP contributions.
+                self.xgb_explainer = self.xgb_model.get_booster()
+
+                self.models_loaded = True
+                self.load_error = None
+                print(f"ML artifacts loaded from {ARTIFACT_DIR}")
+            except Exception as exc:  # noqa: BLE001 - surfaced via /health
+                self.models_loaded = False
+                self.load_error = f"{type(exc).__name__}: {exc}"
+                print(f"ML artifact loading FAILED: {self.load_error}")
+
+            return self.models_loaded
+
+    def _shap_for_prediction(self, frame, predicted_class: int) -> Dict[str, float]:
         """
-        Runs inference and returns a discriminated union response.
+        TreeSHAP attributions explaining the class the model actually predicted.
+
+        `pred_contribs` returns (n_rows, n_classes, n_features + 1) for a
+        multiclass model, where the trailing column is the bias/base term. Only
+        the row for the predicted class is reported, so the chart explains the
+        classification the clinician is actually looking at.
         """
-        # Prepare feature array/dataframe
-        # Assuming model expects: age (numeric), psa_level, psa_density, family_history, bmi_category_encoded
-        bmi_mapping = {"Normal": 0, "Overweight": 1, "Obese": 2}
-        bmi_encoded = bmi_mapping.get(features.bmi_category, 0)
-        
-        # Extract lower bound of age_band
-        try:
-            numeric_age = int(features.age_band.split('-')[0].replace('+', ''))
-        except ValueError:
-            numeric_age = 50  # fallback
-            
-        feature_dict = {
-            "age": numeric_age,
-            "psa_level": features.psa_level,
-            "psa_density": features.psa_density,
-            "family_history": int(features.family_history),
-            "bmi_category": bmi_encoded
+        contributions = np.asarray(
+            self.xgb_explainer.predict(xgb.DMatrix(frame), pred_contribs=True)
+        )
+
+        if contributions.ndim == 3:
+            values = contributions[0, predicted_class, :-1]
+        else:
+            # Binary/regression layout: (n_rows, n_features + 1)
+            values = contributions[0, :-1]
+
+        return {name: float(value) for name, value in zip(FEATURE_ORDER, values)}
+
+    def predict_and_explain(
+        self, features: ClinicalInput, use_logistic: bool = False
+    ) -> PredictionResponse:
+        if not self.models_loaded:
+            raise ModelsUnavailableError(
+                self.load_error or "Model artifacts are not loaded. Run train_models.py."
+            )
+
+        frame = build_frame([features.model_dump()])
+
+        model = self.lr_model if use_logistic else self.xgb_model
+        probabilities: List[float] = model.predict_proba(frame)[0].tolist()
+
+        predicted_class = int(np.argmax(probabilities))
+        category = RISK_CLASSES[predicted_class]
+
+        # Headline score: an expected-severity index over the ordinal risk
+        # classes, sum(P(class) * severity(class)) with severity Low=0,
+        # Intermediate=0.5, High=1.
+        #
+        # NOT simply P(High) or P(not Low). On this cohort the classifier
+        # saturates near 0/1, so P(not Low) returns ~0.9996 for an Intermediate
+        # patient and ~0.9997 for a High one - indistinguishable on a gauge.
+        # The index instead lands near 0.0 / 0.5 / 1.0 respectively, so the
+        # displayed figure separates the three strata and stays monotonic in
+        # severity. It is an index on [0, 1], not a probability of one event.
+        severities = np.linspace(0.0, 1.0, len(RISK_CLASSES))
+        risk_score = float(np.dot(probabilities, severities))
+
+        # Attribution always comes from the primary tree model. A linear
+        # explainer over CalibratedClassifierCV is not well-defined (the
+        # calibrator wraps a scaler+LR pipeline per CV fold), so the response
+        # labels its attribution basis explicitly rather than implying the SHAP
+        # values describe whichever model produced the score.
+        xgb_class = int(np.argmax(self.xgb_model.predict_proba(frame)[0])) if use_logistic else predicted_class
+        shap_values = self._shap_for_prediction(frame, xgb_class)
+
+        class_probabilities = {
+            label: round(float(p), 6) for label, p in zip(RISK_CLASSES, probabilities)
         }
-        
-        df_features = pd.DataFrame([feature_dict])
 
-        if self.models_loaded:
-            if use_logistic and self.lr_model:
-                risk_score = float(self.lr_model.predict_proba(df_features)[0][1])
-                shap_vals_array = self.lr_explainer.shap_values(df_features) if self.lr_explainer else [[0]*len(feature_dict)]
-            else:
-                risk_score = float(self.xgb_model.predict_proba(df_features)[0][1])
-                shap_vals_array = self.xgb_explainer.shap_values(df_features) if self.xgb_explainer else [[0]*len(feature_dict)]
-                
-            # Convert SHAP values array to dict
-            shap_values = dict(zip(feature_dict.keys(), shap_vals_array[0] if isinstance(shap_vals_array, list) else shap_vals_array[0]))
-        else:
-            # --- Simulated fallback ---
-            risk_score = min(1.0, (features.psa_level * 0.05) + (numeric_age * 0.005))
-            if features.family_history:
-                risk_score = min(1.0, risk_score + 0.15)
-                
-            shap_values = {
-                "psa_level": features.psa_level * 0.01,
-                "age": numeric_age * 0.001,
-                "family_history": 0.15 if features.family_history else 0.0,
-                "psa_density": 0.05,
-                "bmi_category": 0.02
-            }
-        
-        if risk_score < 0.3:
-            category = "Low"
-        elif risk_score < 0.7:
-            category = "Intermediate"
-        else:
-            category = "High"
-            
-        shap_summary = "Placeholder for SHAP narrative."
+        common = {
+            "risk_category": category,
+            "shap_summary": "",  # populated by the reasoning engine in the route
+            "shap_values": shap_values,
+            "class_probabilities": class_probabilities,
+            "shap_basis": "xgboost",
+        }
 
         if use_logistic:
-            return LogisticRegressionResponse(
-                risk_category=category,
-                shap_summary=shap_summary,
-                shap_values=shap_values,
-                logistic_risk_score=risk_score
-            )
-        else:
-            return XGBoostResponse(
-                risk_category=category,
-                shap_summary=shap_summary,
-                shap_values=shap_values,
-                xgboost_probability=risk_score
-            )
+            return LogisticRegressionResponse(**common, logistic_risk_score=risk_score)
+        return XGBoostResponse(**common, xgboost_probability=risk_score)
 
+
+# Single shared instance; `load_models()` is called from the FastAPI lifespan.
+inference_service = ModelInference()

@@ -9,5 +9,7 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false
+      # Comma-separated or JSON list. Origins must have NO trailing slash: the
+      # browser's Origin header never carries one and CORS matching is exact.
       - key: BACKEND_CORS_ORIGINS
-        value: "http://localhost:3000,http://127.0.0.1:3000,https://cancer-courage.vercel.app"
+        value: "http://localhost:3000,http://127.0.0.1:3000,https://prostrate-cancer-system.vercel.app"

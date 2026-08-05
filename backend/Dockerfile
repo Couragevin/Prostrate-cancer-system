@@ -16,12 +16,10 @@ COPY --from=builder /app/wheels /wheels
 COPY --from=builder /app/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
-# Pass HuggingFace token as a build argument
-ARG HF_TOKEN
-ENV HF_TOKEN=${HF_TOKEN}
-
-# The models will be downloaded at runtime in app/ml/inference.py
-
+# Model artifacts are committed under app/ml/artifacts and ship inside this
+# COPY. There is no download step and no registry token at build or run time,
+# so a cold start cannot fail on a network fetch. Regenerate the artifacts with
+# `python train_models.py` whenever the dataset changes.
 COPY ./app /app/app
 
 # Render assigns a dynamic port via the PORT environment variable

@@ -10,24 +10,25 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
-import { api } from "@/lib/api";
-import axios from "axios";
+import { api, describeApiError } from "@/lib/api";
 import { RiskCard } from "./RiskCard";
 import { ShapBarChart } from "./ShapBarChart";
 import { AnimatedLoader } from "./AnimatedLoader";
 import { type PredictionResponse } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Calendar, 
-  Scale, 
-  TestTube, 
-  Microscope, 
-  Stethoscope, 
-  Users, 
-  HeartPulse, 
-  Activity, 
+import {
+  Calendar,
+  Scale,
+  TestTube,
+  Microscope,
+  Stethoscope,
+  Users,
+  HeartPulse,
+  Droplet,
   ChevronRight,
   ChevronLeft,
+  RotateCw,
+  AlertOctagon,
   Info
 } from "lucide-react";
 
@@ -38,10 +39,15 @@ const STEPS = [
   { id: "prediction", title: "Prediction Results" }
 ];
 
+/** Minimum time the loader stays visible, so a fast response doesn't flash. */
+const MIN_LOADER_MS = 1200;
+
 export function AssessmentForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [result, setResult] = useState<PredictionResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [completedAt, setCompletedAt] = useState<Date | null>(null);
 
   // Local state for continuous sliders before converting to discrete API bands
   const [ageContinuous, setAgeContinuous] = useState(55);
@@ -53,6 +59,7 @@ export function AssessmentForm() {
     handleSubmit,
     setValue,
     trigger,
+    getValues,
     formState: { errors },
   } = useForm<ClinicalInput>({
     resolver: zodResolver(clinicalInputSchema),
@@ -60,6 +67,8 @@ export function AssessmentForm() {
       age_band: "50-59",
       bmi_category: "Normal",
       family_history: false,
+      hypertension: false,
+      diabetes: false,
     },
   });
 
@@ -98,28 +107,54 @@ export function AssessmentForm() {
     setCurrentStep((prev) => prev - 1);
   };
 
-  const onSubmit = async (data: ClinicalInput) => {
-    setCurrentStep(3); // Move to prediction step
+  const runPrediction = async (data: ClinicalInput) => {
+    // Stay on the results step for the whole request. Previously a failed call
+    // sent the user back to the lab-results form, which read as "the button did
+    // nothing" - the actual error only ever appeared in a toast that had already
+    // faded. Errors now render in place, next to a Retry control.
+    setCurrentStep(3);
     setLoading(true);
+    setSubmitError(null);
+    setResult(null);
+
+    // Start the minimum-display timer alongside the request rather than
+    // measuring elapsed time afterwards: awaiting it in `finally` holds a fast
+    // response back briefly, and costs nothing extra once the request is slower.
+    const loaderFloor = new Promise<void>((resolve) => setTimeout(resolve, MIN_LOADER_MS));
+
     try {
-      const response = await api.post("/api/v1/predict/", data);
+      const response = await api.post<PredictionResponse>("/api/v1/predict/", data);
       setResult(response.data);
+      setCompletedAt(new Date());
       toast.success("Analysis complete");
     } catch (error) {
-      console.error("Prediction failed:", error);
-      let errorMessage = "Prediction failed. Please try again.";
-      if (axios.isAxiosError(error)) {
-        errorMessage = error.response?.data?.detail || error.message;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      toast.error(errorMessage);
-      // fallback step on error
-      setCurrentStep(2);
+      // warn, not error: this failure is fully handled and surfaced in the UI.
+      // console.error would additionally trigger Next's dev error overlay,
+      // which covers the screen with a code frame for an error the app already
+      // recovered from.
+      console.warn("Prediction failed:", error);
+      const message = describeApiError(error);
+      setSubmitError(message);
+      toast.error(message);
     } finally {
-      // Small delay to ensure loader is visible for at least a few seconds to build trust
-      setTimeout(() => setLoading(false), 3000); 
+      await loaderFloor;
+      setLoading(false);
     }
+  };
+
+  const onInvalid = () => {
+    // handleSubmit swallows invalid submissions silently by default, so the
+    // button appeared inert when a required field was missing.
+    toast.error("Please fix the validation errors before proceeding.");
+  };
+
+  const retryPrediction = () => runPrediction(getValues());
+
+  const startNewAssessment = () => {
+    setResult(null);
+    setSubmitError(null);
+    setCompletedAt(null);
+    setCurrentStep(0);
   };
 
   const progressValue = ((currentStep) / (STEPS.length - 1)) * 100;
@@ -244,6 +279,32 @@ export function AssessmentForm() {
                   <input type="checkbox" {...register("family_history")} className="w-5 h-5 rounded text-primary accent-primary" />
                 </label>
 
+                <label className="flex items-center justify-between p-5 bg-card border-2 border-border hover:border-primary/50 cursor-pointer rounded-2xl transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-primary group-has-[:checked]:bg-primary group-has-[:checked]:text-primary-foreground transition-colors">
+                      <HeartPulse className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-foreground">Hypertension</h4>
+                      <p className="text-xs text-muted-foreground">Diagnosed high blood pressure</p>
+                    </div>
+                  </div>
+                  <input type="checkbox" {...register("hypertension")} className="w-5 h-5 rounded text-primary accent-primary" />
+                </label>
+
+                <label className="flex items-center justify-between p-5 bg-card border-2 border-border hover:border-primary/50 cursor-pointer rounded-2xl transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-primary group-has-[:checked]:bg-primary group-has-[:checked]:text-primary-foreground transition-colors">
+                      <Droplet className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-foreground">Diabetes Mellitus</h4>
+                      <p className="text-xs text-muted-foreground">Diagnosed type 1 or type 2 diabetes</p>
+                    </div>
+                  </div>
+                  <input type="checkbox" {...register("diabetes")} className="w-5 h-5 rounded text-primary accent-primary" />
+                </label>
+
               </div>
 
               <div className="flex justify-between pt-4">
@@ -321,7 +382,10 @@ export function AssessmentForm() {
                     name="dre_finding"
                     control={control}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      // `?? null` keeps the Select controlled from the first
+                      // render. Base UI treats `undefined` as uncontrolled and
+                      // warns when the field later receives a value.
+                      <Select onValueChange={field.onChange} value={field.value ?? null}>
                         <SelectTrigger className="h-14 bg-muted border-border text-foreground text-sm rounded-xl focus:ring-primary">
                           <SelectValue placeholder="Select Exam Finding" />
                         </SelectTrigger>
@@ -350,7 +414,7 @@ export function AssessmentForm() {
                   <ChevronLeft className="w-4 h-4" />
                   <span>Back</span>
                 </button>
-                <button type="button" onClick={handleSubmit(onSubmit)} className="btn-pill-primary text-sm flex items-center gap-2 shadow-xl shadow-primary/20">
+                <button type="button" onClick={handleSubmit(runPrediction, onInvalid)} className="btn-pill-primary text-sm flex items-center gap-2 shadow-xl shadow-primary/20">
                   <span>Run Prediction</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -366,38 +430,65 @@ export function AssessmentForm() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              {loading || !result ? (
+              {loading ? (
                 <div className="py-20">
                    <AnimatedLoader />
                 </div>
-              ) : (
+              ) : submitError ? (
+                /* Error state: the user stays here rather than being bounced
+                   back to the form, and can retry without re-entering data. */
+                <div className="py-10 flex flex-col items-center text-center space-y-6" data-testid="prediction-error">
+                  <div className="w-16 h-16 rounded-2xl bg-danger/10 text-danger flex items-center justify-center">
+                    <AlertOctagon className="w-8 h-8" />
+                  </div>
+                  <div className="space-y-2 max-w-md">
+                    <h3 className="text-2xl font-bold text-foreground">Analysis Could Not Complete</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{submitError}</p>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center gap-3">
+                    <button onClick={retryPrediction} className="btn-pill-primary text-sm flex items-center gap-2">
+                      <RotateCw className="w-4 h-4" />
+                      <span>Retry Analysis</span>
+                    </button>
+                    <button onClick={() => setCurrentStep(2)} className="btn-pill-secondary text-sm flex items-center gap-2">
+                      <ChevronLeft className="w-4 h-4" />
+                      <span>Edit Inputs</span>
+                    </button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Your entered values have been kept.
+                  </p>
+                </div>
+              ) : result ? (
                 <div className="space-y-10">
-                  
-                  {/* Results Header Action */}
-                  <div className="flex items-center justify-between border-b border-border pb-4">
+
+                  {/* Results Header Action - hidden when printing */}
+                  <div className="flex items-center justify-between border-b border-border pb-4 print:hidden">
                     <h3 className="text-2xl font-bold text-foreground">Analysis Complete</h3>
-                    <button 
-                      onClick={() => {
-                        setCurrentStep(0);
-                        setResult(null);
-                      }}
+                    <button
+                      onClick={startNewAssessment}
                       className="btn-pill-outline text-xs py-1.5 px-4"
                     >
                       New Assessment
                     </button>
                   </div>
 
-                  <RiskCard 
-                    riskScore={result.xgboost_probability ?? result.logistic_risk_score ?? 0} 
-                    clinicalNarrative={result.shap_summary} 
+                  <RiskCard
+                    riskScore={result.xgboost_probability ?? result.logistic_risk_score ?? 0}
+                    riskCategory={result.risk_category}
+                    clinicalNarrative={result.shap_summary}
+                    classProbabilities={result.class_probabilities}
+                    modelType={result.model_type}
+                    completedAt={completedAt}
+                    inputs={getValues()}
                   />
-                  
+
                   {result.shap_values && (
                     <ShapBarChart shapValues={result.shap_values} />
                   )}
 
                 </div>
-              )}
+              ) : null}
             </motion.div>
           )}
         </AnimatePresence>

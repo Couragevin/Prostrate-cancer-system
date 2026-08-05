@@ -29,6 +29,12 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  /* `danger` is used throughout the components (text-danger, bg-danger/10,
+     border-danger/30). Without this alias those utilities do not exist and
+     Tailwind silently emits nothing, so validation errors and the high-risk
+     styling rendered in the default foreground colour. */
+  --color-danger: var(--destructive);
+  --color-danger-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-success: var(--success);
@@ -168,6 +174,76 @@
   border: 1px solid var(--border);
 }
 
+/* Pill button variants used throughout the assessment wizard. These were
+   referenced by every wizard button but never defined, so Continue / Back /
+   Run Prediction rendered as bare browser-default buttons. */
+.btn-pill-primary,
+.btn-pill-secondary,
+.btn-pill-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.75rem 1.75rem;
+  font-weight: 700;
+  line-height: 1.25;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    transform 0.1s ease, opacity 0.2s ease;
+}
+
+.btn-pill-primary:focus-visible,
+.btn-pill-secondary:focus-visible,
+.btn-pill-outline:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.btn-pill-primary:active,
+.btn-pill-secondary:active,
+.btn-pill-outline:active {
+  transform: translateY(1px);
+}
+
+.btn-pill-primary:disabled,
+.btn-pill-secondary:disabled,
+.btn-pill-outline:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-pill-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: 1px solid var(--primary);
+}
+.btn-pill-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn-pill-secondary {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+}
+.btn-pill-secondary:hover:not(:disabled) {
+  background-color: var(--muted);
+}
+
+.btn-pill-outline {
+  background-color: transparent;
+  color: var(--foreground);
+  border: 1.5px solid var(--border);
+  font-weight: 600;
+}
+.btn-pill-outline:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -177,5 +253,98 @@
   }
   html {
     font-family: var(--font-montserrat), system-ui, sans-serif;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Print: produce a clinical report, not a screenshot of the app.
+   Chrome/Edge honour the dark theme when printing, so the palette is forced
+   back to light here rather than relying on the theme toggle.
+   --------------------------------------------------------------------------- */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  /* Force the light palette regardless of the active theme. */
+  :root,
+  .dark {
+    --background: #FFFFFF;
+    --foreground: #000000;
+    --card: #FFFFFF;
+    --card-foreground: #000000;
+    --muted: #FFFFFF;
+    --muted-foreground: #333333;
+    --border: #999999;
+    --primary: #000000;
+    --secondary: #FFFFFF;
+    --secondary-foreground: #000000;
+    /* Risk colours stay chromatic: the severity of the result is the one thing
+       that must survive onto paper. */
+    --success: #157F3C;
+    --warning: #A66A00;
+    --destructive: #B3261E;
+  }
+
+  html,
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    /* Keep the gauge arc and SHAP bars from being stripped by the browser's
+       default "economy" background/colour removal. */
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Chrome */
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Application chrome that must not appear on a printed record. */
+  aside,
+  header,
+  nav,
+  [data-slot="toaster"],
+  [data-sonner-toaster],
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* The portal layout offsets content for the fixed sidebar; with the sidebar
+     gone that offset would leave a 16rem gutter on paper. */
+  .md\:ml-64 {
+    margin-left: 0 !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  /* Let cards flow onto a second page cleanly instead of clipping. */
+  .print\:break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* The explainability panel gets its own sheet rather than being split. */
+  .print\:break-before-page {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  /* Recharts renders into a sized container; fix a height so the SVG is not
+     collapsed to zero when the print layout recalculates. */
+  .recharts-responsive-container {
+    height: 280px !important;
+    width: 100% !important;
+  }
+
+  a[href]::after {
+    content: "";
   }
 }

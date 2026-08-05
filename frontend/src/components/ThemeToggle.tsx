@@ -4,13 +4,22 @@ import * as React from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
 
-export function ThemeToggle() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
+/**
+ * True once running on the client. `useSyncExternalStore` returns the server
+ * snapshot during SSR and the client snapshot after hydration, which avoids the
+ * hydration mismatch without a setState-inside-useEffect cascade.
+ */
+const subscribeToNothing = () => () => {};
+const useIsMounted = () =>
+  React.useSyncExternalStore(
+    subscribeToNothing,
+    () => true,
+    () => false
+  );
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
+export function ThemeToggle() {
+  const { setTheme, resolvedTheme } = useTheme();
+  const mounted = useIsMounted();
 
   if (!mounted) {
     return (

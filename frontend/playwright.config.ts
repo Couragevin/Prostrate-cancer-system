@@ -18,9 +18,11 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm run build && pnpm run start',
+    // `next dev` keeps the suite runnable without a full production build on
+    // every invocation; CI still builds so the tests exercise the real bundle.
+    command: process.env.CI ? 'pnpm run build && pnpm run start' : 'pnpm run dev',
     url: 'http://127.0.0.1:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120000,
+    timeout: 180000,
   },
 });

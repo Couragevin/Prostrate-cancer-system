@@ -11,10 +11,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.router import api_router
 from app.core.config import settings
 from app.core.supabase import init_pool, close_pool
+from app.ml.inference import inference_service
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Startup: load ML artifacts once, so the first request is not penalised by
+    # model deserialisation and SHAP explainer construction.
+    inference_service.load_models()
     init_pool()
     yield
     # Shutdown
@@ -33,10 +36,10 @@ app = FastAPI(
 )
 
 # Set all CORS enabled origins
-if settings.BACKEND_CORS_ORIGINS:
+if settings.cors_origins:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
+        allow_origins=settings.cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

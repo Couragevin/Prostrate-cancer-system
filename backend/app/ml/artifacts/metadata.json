@@ -1,0 +1,33 @@
+{
+  "feature_order": [
+    "age_band",
+    "psa_level",
+    "psa_density",
+    "family_history",
+    "bmi_category",
+    "hypertension",
+    "diabetes",
+    "dre_finding"
+  ],
+  "risk_classes": [
+    "Low",
+    "Intermediate",
+    "High"
+  ],
+  "n_samples": 500,
+  "n_train": 400,
+  "n_test": 100,
+  "random_state": 42,
+  "metrics": {
+    "xgboost": {
+      "accuracy": 1.0,
+      "roc_auc_ovr_macro": 1.0
+    },
+    "logistic_regression_calibrated": {
+      "accuracy": 0.91,
+      "roc_auc_ovr_macro": 0.982
+    }
+  },
+  "labels_are_rule_derived": true,
+  "metrics_caveat": "Dataset labels are reproducible by a depth-3 decision tree, indicating synthetic rule-generated ground truth. Metrics measure recovery of that rule, not clinical predictive performance on real patients."
+}

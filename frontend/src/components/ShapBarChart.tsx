@@ -1,13 +1,35 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine } from "recharts";
 import { Dna, ArrowUpRight, ArrowDownRight, Lightbulb } from "lucide-react";
+
+/**
+ * The category axis takes a fixed pixel width in Recharts. At 130px it consumed
+ * half of a phone-width chart, squeezing every bar into a sliver. Narrow the
+ * axis (and the gutters) on small screens so the bars keep readable length.
+ */
+function useCompactChart(): boolean {
+  const [compact, setCompact] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 640px)");
+    const sync = () => setCompact(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  return compact;
+}
 
 interface ShapBarChartProps {
   shapValues: Record<string, number>;
 }
 
 export function ShapBarChart({ shapValues }: ShapBarChartProps) {
+  const compact = useCompactChart();
+
   const data = Object.entries(shapValues)
     .map(([feature, impact]) => ({
       feature: formatFeatureName(feature),
@@ -16,10 +38,22 @@ export function ShapBarChart({ shapValues }: ShapBarChartProps) {
     }))
     .sort((a, b) => b.absImpact - a.absImpact);
 
-  const topDrivers = data.slice(0, 3);
+  // SHAP values here are contributions to the model's raw log-odds margin, not
+  // to a probability. Reporting `impact * 100` as "percentage points" produced
+  // impossible figures like "272 percentage points". Share of total absolute
+  // attribution is the honest, unit-free way to rank drivers.
+  const totalAbsImpact = data.reduce((sum, d) => sum + d.absImpact, 0);
+
+  const topDrivers = data
+    .filter((d) => d.absImpact > 0)
+    .slice(0, 3)
+    .map((d) => ({
+      ...d,
+      share: totalAbsImpact > 0 ? (d.absImpact / totalAbsImpact) * 100 : 0,
+    }));
 
   return (
-    <div className="rounded-[32px] border border-border bg-card p-6 sm:p-8 space-y-8 shadow-2xl text-foreground mt-8">
+    <div className="rounded-[32px] border border-border bg-card p-6 sm:p-8 space-y-8 shadow-2xl text-foreground mt-8 print:rounded-none print:shadow-none print:p-0 print:mt-6 print:break-before-page">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
@@ -55,16 +89,16 @@ export function ShapBarChart({ shapValues }: ShapBarChartProps) {
             <BarChart
               data={data}
               layout="vertical"
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              margin={compact ? { top: 5, right: 8, left: 0, bottom: 5 } : { top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <XAxis type="number" hide />
-              <YAxis 
-                dataKey="feature" 
-                type="category" 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fontSize: 12, fill: "var(--color-muted-foreground)" }}
-                width={130}
+              <YAxis
+                dataKey="feature"
+                type="category"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: compact ? 10 : 12, fill: "var(--color-muted-foreground)" }}
+                width={compact ? 84 : 130}
               />
               <Tooltip 
                 cursor={{ fill: "var(--color-muted)" }}
@@ -75,9 +109,11 @@ export function ShapBarChart({ shapValues }: ShapBarChartProps) {
                   color: "var(--color-foreground)",
                   boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2)" 
                 }}
-                formatter={(value: any) => [
-                  typeof value === "number" ? (value > 0 ? `+${value.toFixed(4)}` : value.toFixed(4)) : String(value ?? ""),
-                  "SHAP Contribution"
+                formatter={(value: unknown) => [
+                  typeof value === "number"
+                    ? (value > 0 ? `+${value.toFixed(3)}` : value.toFixed(3))
+                    : String(value ?? ""),
+                  "SHAP (log-odds)"
                 ]}
               />
               <ReferenceLine x={0} stroke="var(--color-border)" strokeDasharray="3 3" />
@@ -111,7 +147,9 @@ export function ShapBarChart({ shapValues }: ShapBarChartProps) {
                 <div>
                   <h4 className="text-sm font-bold text-foreground">{driver.feature}</h4>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                    This factor {driver.impact > 0 ? "increased" : "decreased"} the overall risk probability by roughly {Math.abs(driver.impact * 100).toFixed(1)} percentage points relative to the baseline demographic risk.
+                    {driver.impact > 0 ? "Pushed this patient toward" : "Pulled this patient away from"} the
+                    assessed risk category, accounting for {driver.share.toFixed(0)}% of the
+                    model&apos;s total attributed influence on this prediction.
                   </p>
                 </div>
               </div>
@@ -119,7 +157,9 @@ export function ShapBarChart({ shapValues }: ShapBarChartProps) {
           </div>
 
           <div className="mt-4 p-4 rounded-xl bg-primary/5 border border-primary/20 text-xs text-primary font-medium">
-            <span className="font-bold">Interpretation Guide:</span> SHAP (SHapley Additive exPlanations) values assign each feature an importance value for a particular prediction, offering transparency into how the XGBoost engine reached its conclusion.
+            <span className="font-bold">Interpretation Guide:</span> SHAP (SHapley Additive exPlanations)
+            values assign each feature a contribution to this specific prediction, measured on the
+            model&apos;s log-odds scale. Bars show direction and relative magnitude, not probability change.
           </div>
         </div>
 
@@ -131,6 +171,7 @@ export function ShapBarChart({ shapValues }: ShapBarChartProps) {
 function formatFeatureName(key: string): string {
   const map: Record<string, string> = {
     age: "Age Band",
+    age_band: "Age Band",
     psa_level: "PSA Level",
     psa_density: "PSA Density",
     family_history: "Family History",
@@ -139,5 +180,9 @@ function formatFeatureName(key: string): string {
     diabetes: "Diabetes",
     dre_finding: "DRE Finding"
   };
-  return map[key] || key;
+  // Fall back to a title-cased version rather than leaking a raw snake_case key.
+  return (
+    map[key] ??
+    key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+  );
 }

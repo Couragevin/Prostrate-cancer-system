@@ -2,25 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Users, 
-  TestTube, 
-  LineChart, 
-  FileText, 
-  Settings,
+import {
+  Home,
+  TestTube,
   ShieldCheck,
   LogOut
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
+// Only routes that actually exist. Dashboard / Patients / Analytics / Reports /
+// Settings were listed here but have no corresponding page, so all five 404'd.
+// Add each back as its route lands.
 const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Patients", href: "/patients", icon: Users },
-  { name: "Prediction", href: "/assessment", icon: TestTube },
-  { name: "Analytics", href: "/analytics", icon: LineChart },
-  { name: "Reports", href: "/reports", icon: FileText },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Home", href: "/", icon: Home },
+  { name: "Risk Assessment", href: "/assessment", icon: TestTube },
 ];
 
 export function Sidebar({ className = "" }: { className?: string }) {

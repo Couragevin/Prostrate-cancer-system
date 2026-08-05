@@ -7,6 +7,14 @@
 
 This project is a clinical decision support system for Prostate Cancer Risk Stratification, specifically targeted at early detection in Nigerian men aged forty and above. It utilizes a dual-model approach combining a primary XGBoost classifier with a logistic regression model adjusted via Platt scaling to reflect Nigerian epidemiological prevalence rates.
 
+> **Research prototype — not a diagnostic device.** The bundled
+> `prostate_cancer_dataset.csv` is synthetic: its `target_risk` labels are
+> reproducible exactly by a depth-3 decision tree, so the reported accuracy
+> measures recovery of that generating rule, not clinical predictive
+> performance. See §4.4.3 of the implementation walkthrough. Clinical validity
+> would require retraining and prospective evaluation on a real,
+> outcome-labelled cohort.
+
 The system addresses three critical clinical gaps:
 1. **Explainable AI (XAI)**: Visualizes feature importance using SHAP values (Age, PSA, DRE findings, BMI, Comorbidities).
 2. **Population-Specific Calibration**: Recalibrates machine learning risk probabilities using Platt scaling tailored to Nigerian epidemiological prevalence rates.
@@ -55,9 +63,20 @@ python -m venv venv
 source venv/bin/activate
 
 pip install -r requirements.txt
+
+# Train the models (only needed if artifacts are missing or the dataset changed).
+# Writes to app/ml/artifacts/ -- these are committed, so this is usually a no-op.
+python train_models.py
+
 uvicorn app.main:app --reload --port 8000
 ```
 Open API docs at `http://127.0.0.1:8000/docs`.
+
+Verify the models loaded: `GET /api/v1/` returns `"models_loaded": true`. If it
+reports `"degraded"`, the artifacts are missing — run `python train_models.py`.
+Predictions return **503**, never a fabricated score, while artifacts are absent.
+
+Run the backend tests with `python -m pytest tests/ -q`.
 
 ### 3. Frontend (Next.js)
 ```bash
@@ -66,6 +85,32 @@ pnpm install
 pnpm dev
 ```
 Open application at `http://localhost:3000`.
+
+Run the end-to-end tests with `pnpm exec playwright test` (the API is mocked, so
+no backend is required).
+
+---
+
+## Troubleshooting
+
+**"Run Prediction" shows an error / results never appear.** Almost always CORS.
+The browser's `Origin` header never carries a trailing slash and Starlette
+matches origins by exact string, so every entry in `BACKEND_CORS_ORIGINS` must be
+written without one (`https://app.vercel.app`, not `https://app.vercel.app/`).
+Check a preflight directly — a `400 Disallowed CORS origin` confirms it:
+
+```bash
+curl -i -X OPTIONS "$API_URL/api/v1/predict/" \
+  -H "Origin: http://localhost:3000" \
+  -H "Access-Control-Request-Method: POST" \
+  -H "Access-Control-Request-Headers: content-type"
+```
+
+Note that `curl` alone does **not** reproduce the failure: it ignores CORS, so a
+plain `POST` succeeds while the browser is still blocked.
+
+**Predictions return 503.** The ML artifacts did not load. Check `GET /api/v1/`
+for the `model_error` field.
 
 ---
 
