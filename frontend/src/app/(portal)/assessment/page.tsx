@@ -45,7 +45,7 @@ export default function AssessmentPage() {
         {/* Diagnostic Assessment Card Container */}
         <div className="bg-card rounded-[32px] border border-border p-6 sm:p-10 shadow-2xl space-y-8 print:rounded-none print:border-0 print:p-0 print:shadow-none print:space-y-0">
           <div className="flex items-center gap-4 pb-6 border-b border-border print:hidden">
-            <div className="p-3 rounded-2xl bg-primary/10 text-primary border border-[#0077BE]/20">
+            <div className="p-3 rounded-2xl bg-primary/10 text-primary border border-primary/20">
               <Activity className="w-7 h-7" />
             </div>
             <div>

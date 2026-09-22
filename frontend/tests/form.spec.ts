@@ -68,7 +68,7 @@ test.describe('Risk check wizard', () => {
     await page.goto('/assessment');
     await page.getByRole('button', { name: 'Continue' }).click();
     await page.getByText('Close Family History').click();
-    await page.getByText('High Blood Pressure').click();
+    await page.getByRole('heading', { name: 'High Blood Pressure' }).click();
     await page.getByRole('button', { name: 'Continue' }).click();
     await page.getByLabel('PSA Blood Test Result (ng/mL)').fill('9.1');
     await page.getByLabel('PSA Density').fill('0.22');
